@@ -61,8 +61,8 @@ function TaskActivityChart() {
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
       <defs>
         <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0052cc" stopOpacity=".15" />
-          <stop offset="100%" stopColor="#0052cc" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6C5CE7" stopOpacity=".15" />
+          <stop offset="100%" stopColor="#6C5CE7" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#00a3bf" stopOpacity=".12" />
@@ -76,14 +76,14 @@ function TaskActivityChart() {
             y1={yScale(t)}
             x2={W - PAD.right}
             y2={yScale(t)}
-            stroke="#f1f2f4"
+            stroke="#F1F5F9"
             strokeWidth="1"
           />
           <text
             x={PAD.left - 6}
             y={yScale(t) + 4}
             fontSize="11"
-            fill="#8993a4"
+            fill="#94A3B8"
             textAnchor="end"
           >
             {t}
@@ -96,7 +96,7 @@ function TaskActivityChart() {
           x={PAD.left + i * xStep}
           y={H - PAD.bottom + 16}
           fontSize="11"
-          fill="#8993a4"
+          fill="#94A3B8"
           textAnchor="middle"
         >
           {d.day}
@@ -107,7 +107,7 @@ function TaskActivityChart() {
       <path
         d={toPath("completed")}
         fill="none"
-        stroke="#0052cc"
+        stroke="#6C5CE7"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -119,7 +119,7 @@ function TaskActivityChart() {
           cy={yScale(d.completed)}
           r="4"
           fill="#fff"
-          stroke="#0052cc"
+          stroke="#6C5CE7"
           strokeWidth="2"
         />
       ))}
@@ -143,8 +143,8 @@ function TaskActivityChart() {
         />
       ))}
       <g transform={`translate(${W / 2 - 80}, ${H - 6})`}>
-        <circle cx="6" cy="0" r="5" fill="#0052cc" />
-        <text x="14" y="4" fontSize="11" fill="#0052cc" fontWeight="600">
+        <circle cx="6" cy="0" r="5" fill="#6C5CE7" />
+        <text x="14" y="4" fontSize="11" fill="#6C5CE7" fontWeight="600">
           Completed
         </text>
         <circle cx="92" cy="0" r="5" fill="#00a3bf" />
@@ -158,15 +158,15 @@ function TaskActivityChart() {
 
 function Skeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`animate-pulse bg-[#f1f2f4] rounded-lg ${className}`} />
+    <div className={`animate-pulse bg-[#F1F5F9] rounded-lg ${className}`} />
   );
 }
 
 const PRIORITY_LABEL: Record<string, string> = {
-  low: "bg-slate-50  text-slate-600 border border-slate-200",
-  medium: "bg-orange-50 text-orange-600 border border-orange-200",
-  high: "bg-red-50    text-red-600   border border-red-200",
-  critical: "bg-red-100   text-red-800   border border-red-300",
+  LOW:    "bg-slate-50  text-slate-600 border border-slate-200",
+  MEDIUM: "bg-orange-50 text-orange-600 border border-orange-200",
+  HIGH:   "bg-red-50    text-red-600   border border-red-200",
+  URGENT: "bg-red-100   text-red-800   border border-red-300",
 };
 
 export default function DashboardPage() {
@@ -204,8 +204,8 @@ export default function DashboardPage() {
           change: stats.totalTasksChange,
           changeLabel: "from last week",
           trend: "up" as const,
-          icon: <ListTodo size={18} className="text-[#0052cc]" />,
-          iconBg: "bg-[#e9f2ff]",
+          icon: <ListTodo size={18} className="text-[#6C5CE7]" />,
+          iconBg: "bg-[#F0EDFF]",
         },
         {
           label: "In Progress",
@@ -213,8 +213,8 @@ export default function DashboardPage() {
           change: stats.inProgressChange,
           changeLabel: "from yesterday",
           trend: "up" as const,
-          icon: <Clock size={18} className="text-[#5e4db2]" />,
-          iconBg: "bg-[#f3f0ff]",
+          icon: <Clock size={18} className="text-[#F59E0B]" />,
+          iconBg: "bg-[#FEF9C3]",
         },
         {
           label: "Completed",
@@ -222,8 +222,8 @@ export default function DashboardPage() {
           change: stats.completedChange,
           changeLabel: "",
           trend: "up" as const,
-          icon: <CheckCircle2 size={18} className="text-[#216e4e]" />,
-          iconBg: "bg-[#dcfff1]",
+          icon: <CheckCircle2 size={18} className="text-[#10B981]" />,
+          iconBg: "bg-[#D1FAE5]",
         },
         {
           label: "Overdue",
@@ -231,44 +231,44 @@ export default function DashboardPage() {
           change: stats.overdueChange,
           changeLabel: "",
           trend: "down" as const,
-          icon: <AlertTriangle size={18} className="text-[#ae2e24]" />,
-          iconBg: "bg-[#ffeceb]",
+          icon: <AlertTriangle size={18} className="text-[#EF4444]" />,
+          iconBg: "bg-[#FEE2E2]",
         },
       ]
     : [];
 
   return (
     <>
-      <header className="h-16 bg-white border-b border-[#ebecf0] flex items-center justify-end px-6 gap-3 shrink-0">
+      <header className="h-16 bg-white border-b border-[#E8E8EF] flex items-center justify-end px-6 gap-3 shrink-0">
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 h-9 px-4 rounded-md bg-[#0052cc] text-white text-sm font-semibold hover:bg-[#0041a3] transition-colors"
+          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
         >
           <Plus size={15} /> New Task
         </button>
         <Link
           href="/dashboard/notifications"
-          className="relative w-9 h-9 rounded-md border border-[#dfe1e6] flex items-center justify-center hover:bg-[#f4f5f7] transition-colors"
+          className="relative w-9 h-9 rounded-lg border border-[#E8E8EF] flex items-center justify-center hover:bg-[#F8F8FC] transition-colors"
         >
-          <Bell size={16} className="text-[#44526e]" />
+          <Bell size={16} className="text-[#64748B]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#de350b] text-white text-[10px] font-semibold flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#EF4444] text-white text-[10px] font-semibold flex items-center justify-center">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </Link>
       </header>
 
-      <main className="flex-1 overflow-auto p-6 bg-[#f4f5f7]">
+      <main className="flex-1 overflow-auto p-6 bg-[#F8F9FC]">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Greeting */}
-          <div className="bg-white rounded-xl border border-[#ebecf0] px-6 py-5 flex items-center justify-between">
+          <div className="bg-white rounded-xl border border-[#E8E8EF] px-6 py-5 flex items-center justify-between shadow-sm">
             <div>
-              <h1 className="text-[22px] font-bold text-[#172b4d] leading-tight">
+              <h1 className="text-[22px] font-bold text-[#1E293B] leading-tight">
                 Good morning,{" "}
                 {mounted ? (user?.name?.split(" ")[0] ?? "there") : "there"} 👋
               </h1>
-              <p className="text-sm text-[#6b778c] mt-0.5">{today}</p>
+              <p className="text-sm text-[#94A3B8] mt-0.5">{today}</p>
             </div>
           </div>
 
@@ -295,7 +295,7 @@ export default function DashboardPage() {
               action={
                 <Link
                   href="/dashboard/projects"
-                  className="flex items-center gap-1 text-sm text-[#0052cc] font-semibold hover:underline"
+                  className="flex items-center gap-1 text-sm text-[#6C5CE7] font-semibold hover:underline"
                 >
                   View all <ChevronRight size={14} />
                 </Link>
@@ -310,7 +310,7 @@ export default function DashboardPage() {
                     ))}
                 </div>
               ) : (projects ?? []).length === 0 ? (
-                <p className="text-sm text-[#97a0af] py-4 text-center">
+                <p className="text-sm text-[#94A3B8] py-4 text-center">
                   No projects yet.
                 </p>
               ) : (
@@ -325,15 +325,15 @@ export default function DashboardPage() {
                               className="w-2.5 h-2.5 rounded-sm shrink-0"
                               style={{ backgroundColor: color }}
                             />
-                            <span className="text-sm font-medium text-[#172b4d]">
+                            <span className="text-sm font-medium text-[#1E293B]">
                               {name}
                             </span>
                           </div>
-                          <span className="text-sm font-semibold text-[#44526e]">
+                          <span className="text-sm font-semibold text-[#64748B]">
                             {progress}%
                           </span>
                         </div>
-                        <div className="h-2 rounded-full bg-[#ebecf0] overflow-hidden">
+                        <div className="h-2 rounded-full bg-[#E8E8EF] overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
@@ -354,7 +354,7 @@ export default function DashboardPage() {
               action={
                 <Link
                   href="/dashboard/tasks"
-                  className="flex items-center gap-1 text-sm text-[#0052cc] font-semibold hover:underline"
+                  className="flex items-center gap-1 text-sm text-[#6C5CE7] font-semibold hover:underline"
                 >
                   View all <ChevronRight size={14} />
                 </Link>
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                     ))}
                 </div>
               ) : (myTasks ?? []).length === 0 ? (
-                <p className="text-sm text-[#97a0af] py-4 text-center">
+                <p className="text-sm text-[#94A3B8] py-4 text-center">
                   No tasks in progress.
                 </p>
               ) : (
@@ -377,13 +377,13 @@ export default function DashboardPage() {
                   {(myTasks ?? []).slice(0, 2).map((task) => (
                     <div
                       key={task.id}
-                      className="border border-[#ebecf0] rounded-xl p-4 space-y-3 hover:border-[#dfe1e6] transition-colors bg-[#fafbfc]"
+                      className="border border-[#E8E8EF] rounded-xl p-4 space-y-3 hover:border-[#D1D5DB] transition-colors bg-[#F8F9FC]"
                     >
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-[#172b4d]">
+                        <h4 className="text-sm font-semibold text-[#1E293B]">
                           {task.title}
                         </h4>
-                        <button className="text-[#97a0af] hover:text-[#44526e]">
+                        <button className="text-[#94A3B8] hover:text-[#64748B]">
                           <MoreHorizontal size={15} />
                         </button>
                       </div>
@@ -391,10 +391,10 @@ export default function DashboardPage() {
                         <span
                           className={`px-2 py-0.5 rounded text-[11px] font-semibold capitalize ${PRIORITY_LABEL[task.priority] ?? ""}`}
                         >
-                          {task.priority}
+                          {task.priority.toLowerCase()}
                         </span>
                         {task.dueDate && (
-                          <span className="flex items-center gap-1 text-xs text-[#6b778c] ml-auto">
+                          <span className="flex items-center gap-1 text-xs text-[#94A3B8] ml-auto">
                             <Calendar size={11} />{" "}
                             {new Date(task.dueDate).toLocaleDateString(
                               "en-US",
@@ -435,11 +435,11 @@ export default function DashboardPage() {
                   ))}
               </div>
             ) : (activity ?? []).length === 0 ? (
-              <p className="text-sm text-[#97a0af] py-4 text-center">
+              <p className="text-sm text-[#94A3B8] py-4 text-center">
                 No recent activity.
               </p>
             ) : (
-              <div className="divide-y divide-[#f4f5f7]">
+              <div className="divide-y divide-[#F1F5F9]">
                 {(activity ?? []).map((item) => {
                   const mins = mounted
                     ? Math.round(
@@ -467,14 +467,14 @@ export default function DashboardPage() {
                         {item.user.initials}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#172b4d]">
+                        <p className="text-sm text-[#1E293B]">
                           <span className="font-semibold">
                             {item.user.name}
                           </span>{" "}
-                          <span className="text-[#44526e]">{item.action}</span>{" "}
+                          <span className="text-[#64748B]">{item.action}</span>{" "}
                           <span className="font-semibold">{item.target}</span>
                         </p>
-                        <p className="text-xs text-[#8993a4] mt-0.5">
+                        <p className="text-xs text-[#94A3B8] mt-0.5">
                           {timeStr}
                         </p>
                       </div>

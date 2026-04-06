@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 export const AVATAR_PALETTE = [
-  "#0052cc",
+  "#6C5CE7",
   "#00875a",
   "#ff5630",
   "#6554c0",

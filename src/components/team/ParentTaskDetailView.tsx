@@ -29,8 +29,8 @@ type ColDef = {
 };
 
 const COLUMNS: ColDef[] = [
-  { id: "TODO", label: "TO DO", dot: "#97a0af", bg: "#f4f5f7", accent: "#97a0af" },
-  { id: "IN_PROGRESS", label: "IN PROGRESS", dot: "#0052cc", bg: "#e9f2ff", accent: "#0052cc" },
+  { id: "TODO", label: "TO DO", dot: "#97a0af", bg: "#F1F5F9", accent: "#97a0af" },
+  { id: "IN_PROGRESS", label: "IN PROGRESS", dot: "#6C5CE7", bg: "#F0EDFF", accent: "#6C5CE7" },
   { id: "IN_REVIEW", label: "IN REVIEW", dot: "#ff991f", bg: "#fff7e6", accent: "#ff991f" },
   { id: "DONE", label: "DONE", dot: "#00875a", bg: "#e3fcef", accent: "#00875a" },
 ];
@@ -164,7 +164,7 @@ export default function ParentTaskDetailView({
 
   return (
     <>
-      <div className="flex flex-col h-full bg-[#f4f5f7] dark:bg-slate-950">
+      <div className="flex flex-col h-full bg-[#F1F5F9] dark:bg-slate-950">
         <div className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <button

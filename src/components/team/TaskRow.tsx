@@ -25,7 +25,7 @@ type Props = {
 export default function TaskRow({ task }: Props) {
   const [expanded, setExpanded] = useState(false);
 
-  const hasSubtasks = (task.subtasksCount ?? 0) > 0;
+  const hasSubtasks = (task.subtaskCount ?? 0) > 0;
 
   const { data: subtasks, isLoading: subtasksLoading } = useGetSubtasksQuery(
     task.id,
@@ -110,7 +110,7 @@ export default function TaskRow({ task }: Props) {
         {hasSubtasks && (
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1">
             <Layers size={9} />
-            {task.subtasksCount}
+            {task.subtaskCount}
           </span>
         )}
       </div>
