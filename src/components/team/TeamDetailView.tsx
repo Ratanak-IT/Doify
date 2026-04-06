@@ -6,13 +6,20 @@ import {
   FolderKanban,
   UserPlus,
   Users,
+  Search,
 } from "lucide-react";
 
 import type { Project, Team } from "@/lib/features/types/task-type";
 import { useGetTeamMembersQuery } from "@/lib/features/team/teamApi";
 import { useGetProjectsByTeamQuery } from "@/lib/features/tasks/taskApi";
-import { TEAM_GRADIENTS, TEAM_ICON_BG } from "@/lib/features/team/team.constants";
-import { getAvatarColor, getInitials } from "@/lib/features/team/team.utils";
+import {
+  TEAM_GRADIENTS,
+  TEAM_ICON_BG,
+} from "@/lib/features/team/team.constants";
+import {
+  getAvatarColor,
+  getInitials,
+} from "@/lib/features/team/team.utils";
 
 import InviteModal from "./modals/InviteModal";
 import ProjectTasksPanel from "./ProjectTasksPanel";
@@ -26,13 +33,19 @@ type Props = {
 export default function TeamDetailView({ team, idx, onBack }: Props) {
   const [showInvite, setShowInvite] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projectSearch, setProjectSearch] = useState("");
 
   const gradientCls = TEAM_GRADIENTS[idx % TEAM_GRADIENTS.length];
   const iconBgCls = TEAM_ICON_BG[idx % TEAM_ICON_BG.length];
 
   const { data: projectsPage, isLoading: projectsLoading } =
     useGetProjectsByTeamQuery({ teamId: team.id });
+
   const projects = projectsPage?.content ?? [];
+
+  const filteredProjects = projects.filter((p) =>
+    p.name.toLowerCase().includes(projectSearch.toLowerCase())
+  );
 
   const { data: membersPage } = useGetTeamMembersQuery({ teamId: team.id });
   const members = membersPage?.content ?? [];
@@ -112,6 +125,21 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
             </p>
           </div>
 
+          <div className="px-3 mb-3">
+            <div className="relative">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                value={projectSearch}
+                onChange={(e) => setProjectSearch(e.target.value)}
+                placeholder="Search projects..."
+                className="w-full h-9 pl-9 pr-3 rounded-md border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 dark:text-white outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
+
           {projectsLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
               <div
@@ -123,8 +151,12 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
             <p className="text-xs text-slate-400 dark:text-slate-500 px-4 py-3">
               No projects yet
             </p>
+          ) : filteredProjects.length === 0 ? (
+            <p className="text-xs text-slate-400 dark:text-slate-500 px-4 py-3">
+              No projects found
+            </p>
           ) : (
-            projects.map((project) => (
+            filteredProjects.map((project) => (
               <button
                 key={project.id}
                 onClick={() =>
@@ -146,9 +178,9 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
                   {project.name}
                 </span>
 
-                {(project.tasksCount ?? 0) > 0 && (
+                {((project.tasksCount ?? project.totalTasks) ?? 0) > 0 && (
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0">
-                    {project.tasksCount}
+                    {(project.tasksCount ?? project.totalTasks) ?? 0}
                   </span>
                 )}
               </button>
