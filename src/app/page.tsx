@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { selectCard, moveCard } from "@/lib/features/kanban/kanbanSlice";
 
 const FEATURES = [
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="5.5" height="18" rx="2" fill="currentColor" opacity=".9"/><rect x="9.5" y="2" width="10.5" height="12" rx="2" fill="currentColor" opacity=".5"/></svg>), title: "Kanban Boards", desc: "Drag cards across columns and see the whole project at a glance. Backlog to shipped, always in focus.", color: "#0052cc", bg: "#e9f2ff" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="5.5" height="18" rx="2" fill="currentColor" opacity=".9"/><rect x="9.5" y="2" width="10.5" height="12" rx="2" fill="currentColor" opacity=".5"/></svg>), title: "Kanban Boards", desc: "Drag cards across columns and see the whole project at a glance. Backlog to shipped, always in focus.", color: "#6C5CE7", bg: "#e9f2ff" },
   { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="18" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="9.5" width="14" height="3" rx="1.5" fill="currentColor" opacity=".6"/><rect x="2" y="15" width="10" height="3" rx="1.5" fill="currentColor" opacity=".35"/></svg>), title: "Smart Lists", desc: "Filter, sort, and group tasks any way you need. Deadline view, priority view, assignee view — all instant.", color: "#216e4e", bg: "#dcfff1" },
   { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2"/><path d="M6 11l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>), title: "Rich Task Cards", desc: "Each card holds checklists, due dates, attachments, comments, and assignees — everything in one place.", color: "#5e4db2", bg: "#f3f0ff" },
   { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2v4M11 16v4M2 11h4M16 11h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><circle cx="11" cy="11" r="4" fill="currentColor" opacity=".3"/><circle cx="11" cy="11" r="2" fill="currentColor"/></svg>), title: "Automation", desc: "Let repetitive work handle itself. Set triggers and actions so your workflow runs on autopilot.", color: "#a54800", bg: "#fff3eb" },
@@ -15,7 +15,7 @@ const FEATURES = [
 ];
 
 const TESTIMONIALS = [
-  { name: "Sarah Chen", role: "Product Manager · Shopify", initials: "SC", color: "#0052cc", text: "TaskFlow transformed how our team ships features. We went from chaos to clarity in two weeks flat. Now every sprint is predictable." },
+  { name: "Sarah Chen", role: "Product Manager · Shopify", initials: "SC", color: "#6C5CE7", text: "TaskFlow transformed how our team ships features. We went from chaos to clarity in two weeks flat. Now every sprint is predictable." },
   { name: "Marcus Reid", role: "CTO · Vercel", initials: "MR", color: "#216e4e", text: "The Kanban view alone is worth switching for. Every engineer uses it daily. It replaced three other tools overnight." },
   { name: "Priya Nair", role: "Design Lead · Figma", initials: "PN", color: "#5e4db2", text: "Finally, a project tool designers actually enjoy. Flexible enough for creative work, structured enough for stakeholders." },
 ];
@@ -26,7 +26,7 @@ const PRICING = [
   { name: "Enterprise", price: "Custom", period: "",    cta: "Contact sales",     highlight: false, desc: "For large organizations with compliance and security needs.",     features: ["Everything in Pro", "SSO & SAML", "Audit logs", "SLA guarantee", "Dedicated support", "Custom contracts"] },
 ];
 
-const AV_COLORS: Record<string, string> = { SC: "#0052cc", MR: "#216e4e", PN: "#5e4db2" };
+const AV_COLORS: Record<string, string> = { SC: "#6C5CE7", MR: "#216e4e", PN: "#5e4db2" };
 const PRIORITY_DOT: Record<string, string> = { high: "#ef4444", medium: "#f59e0b", low: "#22c55e" };
 
 function KanbanDemo() {
@@ -256,7 +256,7 @@ export default function HomePage() {
               <div className="lp-preview-board">
                 {[
                   { label: "To Do",       color: "#94a3b8", items: ["Research pricing", "Define OKRs", "Write tests"] },
-                  { label: "In Progress", color: "#0052cc", items: ["Redesign onboarding", "API refactor"] },
+                  { label: "In Progress", color: "#6C5CE7", items: ["Redesign onboarding", "API refactor"] },
                   { label: "Done",        color: "#22c55e", items: ["v2.4 release", "Nav bug fix"] },
                 ].map((col, ci) => (
                   <div key={ci} className="lp-preview-col">
@@ -308,7 +308,7 @@ export default function HomePage() {
           <div className="lp-pricing-grid">
             {PRICING.map((plan, i) => (
               <div key={i} className={`lp-pricing-card${plan.highlight ? " lp-pricing-card--highlight" : ""}`}>
-                <p className="lp-plan-name" style={{ color: plan.highlight ? "#0052cc" : "#7c93d8" }}>{plan.name}</p>
+                <p className="lp-plan-name" style={{ color: plan.highlight ? "#6C5CE7" : "#7c93d8" }}>{plan.name}</p>
                 <div className="lp-plan-price">
                   <span className="lp-plan-amount" style={{ color: plan.highlight ? "#0a0a0a" : "#fff" }}>{plan.price}</span>
                   <span className="lp-plan-period" style={{ color: plan.highlight ? "#64748b" : "#7c93d8" }}>{plan.period}</span>
@@ -317,7 +317,7 @@ export default function HomePage() {
                 <ul className="lp-plan-features">
                   {plan.features.map((f, fi) => (
                     <li key={fi} className="lp-plan-feature" style={{ color: plan.highlight ? "#374151" : "#cdd8f0" }}>
-                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5l3.5 3.5 6.5-7" stroke={plan.highlight ? "#0052cc" : "#4e8af0"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5l3.5 3.5 6.5-7" stroke={plan.highlight ? "#6C5CE7" : "#4e8af0"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       {f}
                     </li>
                   ))}

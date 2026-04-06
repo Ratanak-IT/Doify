@@ -28,10 +28,10 @@ import ProjectTasksPanel from "@/components/team/ProjectTasksPanel";
 
 /* ── Constants ──────────────────────────────────────────────────── */
 const STATUS_STYLE: Record<string, string> = {
-  in_progress: "bg-[#e9f2ff] text-[#0052cc] border-[#cce0ff]",
-  almost_done: "bg-[#dcfff1] text-[#00875a] border-[#b3f5d5]",
-  planning: "bg-[#f4f5f7] text-[#44526e]  border-[#dfe1e6]",
-  active: "bg-[#e9f2ff] text-[#0052cc] border-[#cce0ff]",
+  in_progress: "bg-[#F0EDFF] text-[#6C5CE7] border-[#cce0ff]",
+  almost_done: "bg-[#D1FAE5] text-[#10B981] border-[#b3f5d5]",
+  planning: "bg-[#F1F5F9] text-[#64748B]  border-[#D1D5DB]",
+  active: "bg-[#F0EDFF] text-[#6C5CE7] border-[#cce0ff]",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -42,19 +42,19 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const PROJECT_COLORS = [
-  "#0052cc",
-  "#5e4db2",
+  "#6C5CE7",
+  "#6C5CE7",
   "#f6339a",
   "#ff6900",
-  "#00875a",
+  "#10B981",
   "#00a3bf",
-  "#de350b",
+  "#EF4444",
   "#2b7fff",
   "#9810fa",
 ];
 
 function Skeleton() {
-  return <div className="animate-pulse bg-[#f4f5f7] rounded-xl h-52" />;
+  return <div className="animate-pulse bg-[#F1F5F9] rounded-xl h-52" />;
 }
 
 /* ── New Project Modal ──────────────────────────────────────────── */
@@ -70,7 +70,7 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
     description: "",
     startDate: "",
     dueDate: "",
-    color: "#0052cc",
+    color: "#6C5CE7",
     teamId: "",
   });
 
@@ -120,11 +120,11 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#f4f5f7]">
-          <h2 className="text-base font-bold text-[#172b4d]">New Project</h2>
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#F1F5F9]">
+          <h2 className="text-base font-bold text-[#1E293B]">New Project</h2>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-[#97a0af] hover:bg-[#f4f5f7] transition-colors"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] transition-colors"
           >
             <X size={15} />
           </button>
@@ -132,13 +132,13 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {apiError && (
-            <p className="text-sm text-[#de350b] bg-[#ffeceb] border border-[#ffd5cc] p-3 rounded-lg">
+            <p className="text-sm text-[#EF4444] bg-[#FEE2E2] border border-[#ffd5cc] p-3 rounded-lg">
               {apiError}
             </p>
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+            <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
               Project name *
             </label>
             <input
@@ -147,17 +147,17 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
               placeholder="e.g. Website Redesign"
               className={`w-full h-10 px-3 rounded-md border text-sm outline-none bg-white transition-colors ${
                 errors.name
-                  ? "border-[#de350b]"
-                  : "border-[#dfe1e6] focus:border-[#0052cc]"
+                  ? "border-[#EF4444]"
+                  : "border-[#D1D5DB] focus:border-[#6C5CE7]"
               }`}
             />
             {errors.name && (
-              <p className="text-xs text-[#de350b] mt-1">{errors.name}</p>
+              <p className="text-xs text-[#EF4444] mt-1">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+            <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
               Description
             </label>
             <textarea
@@ -167,45 +167,45 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
               }
               rows={2}
               placeholder="What is this project about?"
-              className="w-full px-3 py-2.5 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white resize-none transition-colors"
+              className="w-full px-3 py-2.5 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white resize-none transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+              <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
                 Start date
               </label>
               <input
                 type="date"
                 value={form.startDate}
                 onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white transition-colors"
+                className="w-full h-10 px-3 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+              <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
                 Due date
               </label>
               <input
                 type="date"
                 value={form.dueDate}
                 onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white transition-colors"
+                className="w-full h-10 px-3 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white transition-colors"
               />
             </div>
           </div>
 
           {teams.length > 0 && (
             <div>
-              <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+              <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
                 Team
               </label>
               <select
                 value={form.teamId}
                 onChange={(e) => setForm({ ...form, teamId: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white appearance-none"
+                className="w-full h-10 px-3 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white appearance-none"
               >
                 <option value="">No team</option>
                 {teams.map((t) => (
@@ -218,7 +218,7 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-2">
+            <label className="block text-sm font-semibold text-[#64748B] mb-2">
               Color
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -229,7 +229,7 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
                   onClick={() => setForm({ ...form, color: c })}
                   className={`w-7 h-7 rounded-full transition-transform ${
                     form.color === c
-                      ? "ring-2 ring-offset-2 ring-[#0052cc] scale-110"
+                      ? "ring-2 ring-offset-2 ring-[#6C5CE7] scale-110"
                       : "hover:scale-105"
                   }`}
                   style={{ backgroundColor: c }}
@@ -242,14 +242,14 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-9 rounded-md border border-[#dfe1e6] text-sm font-semibold text-[#44526e] hover:bg-[#f4f5f7] transition-colors"
+              className="flex-1 h-9 rounded-md border border-[#D1D5DB] text-sm font-semibold text-[#64748B] hover:bg-[#F1F5F9] transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 h-9 rounded-md bg-[#0052cc] text-white text-sm font-semibold hover:bg-[#0041a3] transition-colors disabled:opacity-60"
+              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors disabled:opacity-60"
             >
               {isLoading ? "Creating…" : "Create Project"}
             </button>
@@ -312,11 +312,11 @@ function EditProjectModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#f4f5f7]">
-          <h2 className="text-base font-bold text-[#172b4d]">Edit Project</h2>
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#F1F5F9]">
+          <h2 className="text-base font-bold text-[#1E293B]">Edit Project</h2>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-[#97a0af] hover:bg-[#f4f5f7] transition-colors"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] transition-colors"
           >
             <X size={15} />
           </button>
@@ -324,13 +324,13 @@ function EditProjectModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {apiError && (
-            <p className="text-sm text-[#de350b] bg-[#ffeceb] border border-[#ffd5cc] p-3 rounded-lg">
+            <p className="text-sm text-[#EF4444] bg-[#FEE2E2] border border-[#ffd5cc] p-3 rounded-lg">
               {apiError}
             </p>
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+            <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
               Project name
             </label>
             <input
@@ -338,17 +338,17 @@ function EditProjectModal({
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className={`w-full h-10 px-3 rounded-md border text-sm outline-none bg-white transition-colors ${
                 errors.name
-                  ? "border-[#de350b]"
-                  : "border-[#dfe1e6] focus:border-[#0052cc]"
+                  ? "border-[#EF4444]"
+                  : "border-[#D1D5DB] focus:border-[#6C5CE7]"
               }`}
             />
             {errors.name && (
-              <p className="text-xs text-[#de350b] mt-1">{errors.name}</p>
+              <p className="text-xs text-[#EF4444] mt-1">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+            <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
               Description
             </label>
             <textarea
@@ -357,24 +357,24 @@ function EditProjectModal({
                 setForm({ ...form, description: e.target.value })
               }
               rows={2}
-              className="w-full px-3 py-2.5 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white resize-none transition-colors"
+              className="w-full px-3 py-2.5 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white resize-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-1.5">
+            <label className="block text-sm font-semibold text-[#64748B] mb-1.5">
               Due date
             </label>
             <input
               type="date"
               value={form.dueDate}
               onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-              className="w-full h-10 px-3 rounded-md border border-[#dfe1e6] text-sm outline-none focus:border-[#0052cc] bg-white transition-colors"
+              className="w-full h-10 px-3 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#44526e] mb-2">
+            <label className="block text-sm font-semibold text-[#64748B] mb-2">
               Color
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -385,7 +385,7 @@ function EditProjectModal({
                   onClick={() => setForm({ ...form, color: c })}
                   className={`w-7 h-7 rounded-full transition-transform ${
                     form.color === c
-                      ? "ring-2 ring-offset-2 ring-[#0052cc] scale-110"
+                      ? "ring-2 ring-offset-2 ring-[#6C5CE7] scale-110"
                       : "hover:scale-105"
                   }`}
                   style={{ backgroundColor: c }}
@@ -398,14 +398,14 @@ function EditProjectModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-9 rounded-md border border-[#dfe1e6] text-sm font-semibold text-[#44526e] hover:bg-[#f4f5f7] transition-colors"
+              className="flex-1 h-9 rounded-md border border-[#D1D5DB] text-sm font-semibold text-[#64748B] hover:bg-[#F1F5F9] transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 h-9 rounded-md bg-[#0052cc] text-white text-sm font-semibold hover:bg-[#0041a3] transition-colors disabled:opacity-60"
+              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors disabled:opacity-60"
             >
               {isLoading ? "Saving…" : "Save Changes"}
             </button>
@@ -435,7 +435,7 @@ function ProjectCard({
   return (
     <div
       onClick={() => onSelect(project)}
-      className="bg-white rounded-xl border border-[#ebecf0] overflow-hidden hover:shadow-md transition-all group cursor-pointer"
+      className="bg-white rounded-xl border border-[#E8E8EF] overflow-hidden hover:shadow-md transition-all group cursor-pointer"
     >
       <div className="h-2" style={{ backgroundColor: project.color }} />
 
@@ -449,11 +449,11 @@ function ProjectCard({
               {project.name[0].toUpperCase()}
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#172b4d] leading-tight">
+              <h3 className="text-sm font-bold text-[#1E293B] leading-tight">
                 {project.name}
               </h3>
               {project.description && (
-                <p className="text-xs text-[#97a0af] mt-0.5 line-clamp-1">
+                <p className="text-xs text-[#94A3B8] mt-0.5 line-clamp-1">
                   {project.description}
                 </p>
               )}
@@ -463,7 +463,7 @@ function ProjectCard({
           <div className="relative" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setMenuOpen((o) => !o)}
-              className="w-7 h-7 flex items-center justify-center text-[#97a0af] hover:bg-[#f4f5f7] rounded opacity-0 group-hover:opacity-100 transition-all"
+              className="w-7 h-7 flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] rounded opacity-0 group-hover:opacity-100 transition-all"
             >
               <MoreHorizontal size={14} />
             </button>
@@ -474,13 +474,13 @@ function ProjectCard({
                   className="fixed inset-0 z-10"
                   onClick={() => setMenuOpen(false)}
                 />
-                <div className="absolute right-0 top-8 z-20 bg-white rounded-lg shadow-lg border border-[#ebecf0] py-1 min-w-[120px]">
+                <div className="absolute right-0 top-8 z-20 bg-white rounded-lg shadow-lg border border-[#E8E8EF] py-1 min-w-[120px]">
                   <button
                     onClick={() => {
                       onEdit(project);
                       setMenuOpen(false);
                     }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#44526e] hover:bg-[#f4f5f7]"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#64748B] hover:bg-[#F1F5F9]"
                   >
                     <Edit2 size={13} /> Edit
                   </button>
@@ -491,7 +491,7 @@ function ProjectCard({
                         setMenuOpen(false);
                       }
                     }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#de350b] hover:bg-[#ffeceb]"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#EF4444] hover:bg-[#FEE2E2]"
                   >
                     <Trash2 size={13} /> Delete
                   </button>
@@ -512,11 +512,11 @@ function ProjectCard({
         )}
 
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-[#6b778c]">
+          <div className="flex justify-between text-xs text-[#94A3B8]">
             <span>Progress</span>
             <span className="font-semibold">{progress}%</span>
           </div>
-          <div className="w-full bg-[#f4f5f7] rounded-full h-1.5">
+          <div className="w-full bg-[#F1F5F9] rounded-full h-1.5">
             <div
               className="h-1.5 rounded-full transition-all"
               style={{
@@ -527,7 +527,7 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-[#6b778c]">
+        <div className="flex items-center justify-between text-xs text-[#94A3B8]">
           <span className="flex items-center gap-1">
             <TrendingUp size={11} /> {project.tasksDone ?? 0}/
             {project.tasksCount ?? 0} tasks
@@ -574,21 +574,21 @@ export default function ProjectsPage() {
   if (activeProject) {
     return (
       <div className="flex flex-col h-full overflow-hidden">
-        <div className="h-16 bg-white border-b border-[#ebecf0] flex items-center px-6 shrink-0">
+        <div className="h-16 bg-white border-b border-[#E8E8EF] flex items-center px-6 shrink-0">
           <button
             onClick={() => setActiveProject(null)}
-            className="h-9 px-3 rounded-md border border-[#dfe1e6] text-sm font-medium text-[#44526e] hover:bg-[#f4f5f7] transition-colors flex items-center gap-2"
+            className="h-9 px-3 rounded-md border border-[#D1D5DB] text-sm font-medium text-[#64748B] hover:bg-[#F1F5F9] transition-colors flex items-center gap-2"
           >
             <ArrowLeft size={14} />
             Back
           </button>
 
           <div className="ml-4 min-w-0">
-            <h1 className="text-lg font-bold text-[#172b4d] truncate">
+            <h1 className="text-lg font-bold text-[#1E293B] truncate">
               {activeProject.name}
             </h1>
             {activeProject.description && (
-              <p className="text-xs text-[#97a0af] truncate">
+              <p className="text-xs text-[#94A3B8] truncate">
                 {activeProject.description}
               </p>
             )}
@@ -602,37 +602,37 @@ export default function ProjectsPage() {
 
   return (
     <>
-      <header className="h-16 bg-white border-b border-[#ebecf0] flex items-center justify-between px-6 shrink-0">
-        <h1 className="text-lg font-bold text-[#172b4d]">Projects</h1>
+      <header className="h-16 bg-white border-b border-[#E8E8EF] flex items-center justify-between px-6 shrink-0">
+        <h1 className="text-lg font-bold text-[#1E293B]">Projects</h1>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => refetch()}
-            className="w-9 h-9 rounded-md border border-[#dfe1e6] flex items-center justify-center text-[#6b778c] hover:bg-[#f4f5f7] transition-colors"
+            className="w-9 h-9 rounded-md border border-[#D1D5DB] flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] transition-colors"
           >
             <RefreshCw size={14} />
           </button>
 
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-2 h-9 px-4 rounded-md bg-[#0052cc] text-white text-sm font-semibold hover:bg-[#0041a3] transition-colors"
+            className="flex items-center gap-2 h-9 px-4 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
           >
             <Plus size={15} /> New Project
           </button>
         </div>
       </header>
 
-      <div className="px-6 py-3 bg-white border-b border-[#ebecf0]">
+      <div className="px-6 py-3 bg-white border-b border-[#E8E8EF]">
         <div className="relative max-w-xs">
           <Search
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#97a0af]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
           />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search projects…"
-            className="w-full h-9 pl-9 pr-3 rounded-md border border-[#dfe1e6] text-sm bg-white outline-none focus:border-[#0052cc] transition-colors placeholder:text-[#97a0af]"
+            className="w-full h-9 pl-9 pr-3 rounded-md border border-[#D1D5DB] text-sm bg-white outline-none focus:border-[#6C5CE7] transition-colors placeholder:text-[#94A3B8]"
           />
         </div>
       </div>
@@ -657,15 +657,15 @@ export default function ProjectsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <p className="text-[#44526e] font-semibold text-sm">
+            <p className="text-[#64748B] font-semibold text-sm">
               No projects found
             </p>
-            <p className="text-[#97a0af] text-xs mt-1">
+            <p className="text-[#94A3B8] text-xs mt-1">
               Create a project to get started
             </p>
             <button
               onClick={() => setShowNew(true)}
-              className="mt-4 flex items-center gap-2 h-9 px-4 rounded-md bg-[#0052cc] text-white text-sm font-semibold hover:bg-[#0041a3] transition-colors"
+              className="mt-4 flex items-center gap-2 h-9 px-4 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
             >
               <Plus size={15} /> New Project
             </button>

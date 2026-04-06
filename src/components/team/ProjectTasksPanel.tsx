@@ -44,15 +44,15 @@ const COLUMNS: ColDef[] = [
     id: "TODO",
     label: "TO DO",
     dot: "#97a0af",
-    bg: "#f4f5f7",
+    bg: "#F1F5F9",
     accent: "#97a0af",
   },
   {
     id: "IN_PROGRESS",
     label: "IN PROGRESS",
-    dot: "#0052cc",
-    bg: "#e9f2ff",
-    accent: "#0052cc",
+    dot: "#6C5CE7",
+    bg: "#F0EDFF",
+    accent: "#6C5CE7",
   },
   {
     id: "IN_REVIEW",
@@ -127,14 +127,14 @@ function CommentsDrawer({
 
   const getAvatarColor = (seed: string) => {
     const colors = [
-      "#0052cc",
+      "#6C5CE7",
       "#00875a",
       "#ff5630",
       "#6554c0",
       "#ff991f",
       "#00b8d9",
       "#36b37e",
-      "#de350b",
+      "#EF4444",
     ];
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
@@ -303,7 +303,7 @@ function TeamTaskCard({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const hasSubtasks = (task.subtaskCount ?? task.subtaskCount ?? 0) > 0;
+  const hasSubtasks = (task.subtaskCount ?? 0) > 0;
 
   const { data: subtasks = [], isLoading: subtasksLoading } =
     useGetSubtasksQuery(task.id, {
@@ -376,8 +376,8 @@ function TeamTaskCard({
 
         {hasSubtasks && (
           <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-            {task.subtaskCount ?? task.subtaskCount} subtask
-            {(task.subtaskCount ?? task.subtaskCount) !== 1 ? "s" : ""}
+            {task.subtaskCount ?? 0} subtask
+            {(task.subtaskCount ?? 0) !== 1 ? "s" : ""}
           </span>
         )}
       </div>
@@ -487,7 +487,7 @@ const tasks = allTasks.filter((t) => !t.parentTaskId);
 
   return (
     <>
-      <div className="flex flex-col h-full bg-[#f4f5f7] dark:bg-slate-950">
+      <div className="flex flex-col h-full bg-[#F1F5F9] dark:bg-slate-950">
         <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
           <div
             className="w-3 h-3 rounded-full shrink-0"

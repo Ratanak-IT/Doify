@@ -21,14 +21,14 @@ function getInitials(fullName: string): string {
 
 function getAvatarColor(seed: string): string {
   const AVATAR_PALETTE = [
-    "#0052cc",
+    "#6C5CE7",
     "#00875a",
     "#ff5630",
     "#6554c0",
     "#ff991f",
     "#00b8d9",
     "#36b37e",
-    "#de350b",
+    "#EF4444",
   ];
 
   let hash = 0;
@@ -91,9 +91,9 @@ export default function CommentsDrawer({
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
       <div className="relative bg-white dark:bg-slate-900 w-full max-w-sm flex flex-col shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#ebecf0] dark:border-slate-800 shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8EF] dark:border-slate-800 shrink-0">
           <div>
-            <p className="text-sm font-semibold text-[#172b4d] dark:text-white line-clamp-1">
+            <p className="text-sm font-semibold text-[#1E293B] dark:text-white line-clamp-1">
               {task.title}
             </p>
             <p className="text-xs text-[#97a0af] dark:text-slate-400">
@@ -103,7 +103,7 @@ export default function CommentsDrawer({
 
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-[#97a0af] hover:bg-[#f4f5f7] dark:hover:bg-slate-800"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#97a0af] hover:bg-[#F1F5F9] dark:hover:bg-slate-800"
           >
             <X size={15} />
           </button>
@@ -137,7 +137,7 @@ export default function CommentsDrawer({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-xs font-semibold text-[#172b4d] dark:text-white">
+                    <span className="text-xs font-semibold text-[#1E293B] dark:text-white">
                       {authorName}
                     </span>
                     <span className="text-[10px] text-[#97a0af] dark:text-slate-400">
@@ -150,7 +150,7 @@ export default function CommentsDrawer({
                           setEditId(c.id);
                           setEditText(c.content);
                         }}
-                        className="text-[#97a0af] hover:text-[#0052cc]"
+                        className="text-[#97a0af] hover:text-[#6C5CE7]"
                         title="Edit"
                       >
                         <Edit2 size={11} />
@@ -158,7 +158,7 @@ export default function CommentsDrawer({
 
                       <button
                         onClick={() => handleDelete(c.id)}
-                        className="text-[#97a0af] hover:text-[#de350b]"
+                        className="text-[#97a0af] hover:text-[#EF4444]"
                         title="Delete"
                       >
                         <Trash2 size={11} />
@@ -171,11 +171,11 @@ export default function CommentsDrawer({
                       <input
                         value={editText}
                         onChange={(e) => setEditText(e.target.value)}
-                        className="flex-1 h-7 px-2 text-xs rounded border border-[#0052cc] outline-none bg-white dark:bg-slate-800 dark:text-white"
+                        className="flex-1 h-7 px-2 text-xs rounded border border-[#6C5CE7] outline-none bg-white dark:bg-slate-800 dark:text-white"
                       />
                       <button
                         onClick={() => saveEdit(c.id)}
-                        className="w-7 h-7 rounded bg-[#0052cc] text-white flex items-center justify-center"
+                        className="w-7 h-7 rounded bg-[#6C5CE7] text-white flex items-center justify-center"
                       >
                         <Check size={11} />
                       </button>
@@ -187,7 +187,7 @@ export default function CommentsDrawer({
                       </button>
                     </div>
                   ) : (
-                    <p className="text-sm text-[#44526e] dark:text-slate-300 mt-0.5 leading-relaxed break-words">
+                    <p className="text-sm text-[#64748B] dark:text-slate-300 mt-0.5 leading-relaxed break-words">
                       {c.content}
                     </p>
                   )}
@@ -197,7 +197,7 @@ export default function CommentsDrawer({
           })}
         </div>
 
-        <div className="border-t border-[#ebecf0] dark:border-slate-800 p-4 shrink-0">
+        <div className="border-t border-[#E8E8EF] dark:border-slate-800 p-4 shrink-0">
           <div className="flex gap-2">
             <input
               value={text}
@@ -209,12 +209,12 @@ export default function CommentsDrawer({
                 }
               }}
               placeholder="Write a comment…"
-              className="flex-1 h-9 px-3 rounded-md border border-[#dfe1e6] dark:border-slate-700 text-sm outline-none focus:border-[#0052cc] bg-white dark:bg-slate-800 dark:text-white transition-colors"
+              className="flex-1 h-9 px-3 rounded-md border border-[#D1D5DB] dark:border-slate-700 text-sm outline-none focus:border-[#6C5CE7] bg-white dark:bg-slate-800 dark:text-white transition-colors"
             />
             <button
               onClick={submit}
               disabled={posting || !text.trim()}
-              className="w-9 h-9 rounded-md bg-[#0052cc] text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#0041a3] transition-colors"
+              className="w-9 h-9 rounded-md bg-[#6C5CE7] text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#5B4BD5] transition-colors"
             >
               <Send size={14} />
             </button>

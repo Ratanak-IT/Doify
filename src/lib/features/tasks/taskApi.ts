@@ -144,7 +144,7 @@ export const taskApi = baseApi.injectEndpoints({
         url: `/tasks/${taskId}/attachments/${attachmentId}`,
         method: "DELETE",
       }),
-      transformResponse: () => undefined, 
+      transformResponse: () => null, 
       invalidatesTags: (_r, _e, { taskId }) => [{ type: "Task", id: taskId }],
     }),
 
@@ -189,7 +189,7 @@ export const taskApi = baseApi.injectEndpoints({
         url: `/tasks/${taskId}/comments/${commentId}`,
         method: "DELETE",
       }),
-      transformResponse: () => undefined, 
+      transformResponse: () => null, 
       invalidatesTags: ["Comment"],
     }),
 
@@ -266,7 +266,7 @@ export const taskApi = baseApi.injectEndpoints({
         url: `/projects/${id}`,
         method: "DELETE",
       }),
-      transformResponse: () => undefined, 
+      transformResponse: () => null, 
       invalidatesTags: ["Project"],
     }),
 

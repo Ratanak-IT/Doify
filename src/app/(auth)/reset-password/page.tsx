@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useResetPasswordMutation } from "@/lib/features/auth/authApi";
 import { resetPasswordSchema } from "@/lib/schemas";
-import { Eye, EyeOff, Check } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, ArrowRight, ArrowLeft, Shield, Lock, KeyRound, Check } from "lucide-react";
 import type { z } from "zod";
 
 type Form = z.infer<typeof resetPasswordSchema>;
@@ -48,107 +48,162 @@ function ResetPasswordForm() {
 
   if (done) {
     return (
-      <div className="text-center space-y-4">
-        <div className="w-14 h-14 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mx-auto">
-          <Check size={24} className="text-green-500" />
+        <div className="text-center space-y-5">
+          <div className="w-16 h-16 rounded-full bg-[rgba(5,223,114,0.1)] border border-[rgba(5,223,114,0.3)] flex items-center justify-center mx-auto">
+            <Check size={28} className="text-[#05df72]" />
+          </div>
+          <div>
+            <h2 className="text-[30px] font-bold text-[#0a0a0a] mb-2">Password reset!</h2>
+            <p className="text-[#717182] text-base">Your password has been updated. Redirecting you to sign in…</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-[#0a0a0a] mb-1">Password reset!</h2>
-          <p className="text-sm text-[#6a7282]">Your password has been updated. Redirecting you to sign in…</p>
-        </div>
-      </div>
     );
   }
 
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0a0a0a] mb-1">Set new password</h1>
-        <p className="text-sm text-[#6a7282]">Choose a strong new password for your account.</p>
-      </div>
-
-      {!token && (
-        <div className="mb-4 p-3 rounded-lg bg-orange-50 border border-orange-200 text-sm text-orange-600">
-          No reset token found. Please use the link from your email.
+      <>
+        <div className="space-y-2 mb-8">
+          <h2 className="text-[30px] font-bold text-[#0a0a0a] leading-9">Set new password</h2>
+          <p className="text-[#717182] text-base">Choose a strong new password for your account.</p>
         </div>
-      )}
-      {errors.general && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600">{errors.general}</div>
-      )}
 
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        <div>
-          <label className="block text-sm font-medium text-[#374151] mb-1.5">New password</label>
-          <div className="relative">
-            <input
-              type={showPwd ? "text" : "password"}
-              placeholder="Min. 8 characters"
-              value={form.newPassword}
-              onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-              style={{ paddingRight: "2.5rem" }}
-              className={`w-full h-10 px-3 rounded-lg border text-sm outline-none transition-colors bg-white placeholder:text-[#9ca3af] ${
-                errors.newPassword ? "border-red-400 bg-red-50" : "border-[#e5e7eb] focus:border-[#615fff]"
-              }`}
-            />
-            <button type="button" onClick={() => setShow((s) => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#374151]">
-              {showPwd ? <EyeOff size={14} /> : <Eye size={14} />}
-            </button>
+        {!token && (
+            <div className="mb-5 p-3.5 rounded-[14px] bg-amber-50 border border-amber-200 text-sm text-amber-700">
+              No reset token found. Please use the link from your email.
+            </div>
+        )}
+        {errors.general && (
+            <div className="mb-5 p-3.5 rounded-[14px] bg-red-50 border border-red-200 text-sm text-red-600">{errors.general}</div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <div>
+            <label className="block text-sm font-medium text-[#0a0a0a] mb-1.5">New password</label>
+            <div className="relative">
+              <input
+                  type={showPwd ? "text" : "password"}
+                  placeholder="Min. 8 characters"
+                  value={form.newPassword}
+                  onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+                  className={`w-full h-[46px] px-4 pr-12 rounded-[14px] border text-sm outline-none transition-all bg-white placeholder:text-[#717182] ${
+                      errors.newPassword ? "border-red-400 bg-red-50" : "border-black/10 focus:border-[#4f39f6] focus:ring-2 focus:ring-[#4f39f6]/10"
+                  }`}
+              />
+              <button type="button" onClick={() => setShow((s) => !s)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#717182] hover:text-[#0a0a0a] transition-colors">
+                {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.newPassword && <p className="mt-1 text-xs text-red-500">{errors.newPassword}</p>}
           </div>
-          {errors.newPassword && <p className="mt-1 text-xs text-red-500">{errors.newPassword}</p>}
+
+          <div>
+            <label className="block text-sm font-medium text-[#0a0a0a] mb-1.5">Confirm new password</label>
+            <input
+                type="password"
+                placeholder="Re-enter your password"
+                value={form.confirmPassword}
+                onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+                className={`w-full h-[46px] px-4 rounded-[14px] border text-sm outline-none transition-all bg-white placeholder:text-[#717182] ${
+                    errors.confirmPassword ? "border-red-400 bg-red-50" : "border-black/10 focus:border-[#4f39f6] focus:ring-2 focus:ring-[#4f39f6]/10"
+                }`}
+            />
+            {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
+          </div>
+
+          <button type="submit" disabled={isLoading || !token}
+                  className="w-full h-12 rounded-[14px] bg-[#4f39f6] text-white text-base font-semibold hover:bg-[#4530e0] transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-[0px_10px_15px_0px_#c6d2ff,0px_4px_6px_0px_#c6d2ff]">
+            {isLoading
+                ? <><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/><path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Resetting…</>
+                : <>Reset password <ArrowRight size={16} /></>
+            }
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <Link href="/login" className="inline-flex items-center gap-1.5 text-sm text-[#717182] hover:text-[#0a0a0a] font-medium transition-colors">
+            <ArrowLeft size={14} /> Back to sign in
+          </Link>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-[#374151] mb-1.5">Confirm new password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={form.confirmPassword}
-            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-            className={`w-full h-10 px-3 rounded-lg border text-sm outline-none transition-colors bg-white placeholder:text-[#9ca3af] ${
-              errors.confirmPassword ? "border-red-400 bg-red-50" : "border-[#e5e7eb] focus:border-[#615fff]"
-            }`}
-          />
-          {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
-        </div>
-
-        <button type="submit" disabled={isLoading || !token}
-          className="w-full h-10 rounded-lg bg-black text-white text-sm font-medium hover:bg-[#1a1a1a] transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
-          {isLoading
-            ? <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/><path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Resetting…</>
-            : "Reset password"
-          }
-        </button>
-      </form>
-
-      <div className="mt-6 text-center">
-        <Link href="/login" className="text-sm text-[#6a7282] hover:text-[#374151]">Back to sign in</Link>
-      </div>
-    </>
+      </>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-violet-50 px-4">
-      <div className="w-full max-w-md">
-        <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M4 10L8 14L16 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+      <div className="min-h-screen flex">
+        {/* Left Panel - Branding */}
+        <div className="hidden lg:flex lg:w-[58%] relative overflow-hidden flex-col justify-between p-12"
+             style={{ background: "linear-gradient(131deg, #312c85 0%, #59168b 50%, #372aac 100%)" }}>
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[14px] bg-white/20 flex items-center justify-center">
+              <CheckCircle2 size={24} className="text-white" />
+            </div>
+            <span className="text-white text-2xl font-bold">TaskFlow</span>
           </div>
-          <div>
-            <p className="font-bold text-[15px] text-[#0a0a0a] leading-none">TaskFlow</p>
-            <p className="text-xs text-[#6a7282]">Enterprise</p>
+
+          {/* Hero */}
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-5xl font-bold text-white leading-tight">Secure your</h1>
+              <h1 className="text-5xl font-bold text-[#a3b3ff] leading-tight">account.</h1>
+              <p className="text-[#c6d2ff] text-lg mt-4 max-w-md">
+                Create a strong password to keep your workspace and data safe.
+              </p>
+            </div>
+
+            {/* Info Cards */}
+            <div className="space-y-4">
+              {[
+                { icon: <Lock size={20} />, title: "Strong passwords", desc: "Use 8+ characters with mixed cases and symbols" },
+                { icon: <Shield size={20} />, title: "Encrypted storage", desc: "Your password is securely hashed and encrypted" },
+                { icon: <KeyRound size={20} />, title: "One-time link", desc: "Reset links can only be used once for safety" },
+              ].map((f) => (
+                  <div key={f.title} className="flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-4">
+                    <div className="w-10 h-10 rounded-[14px] bg-[rgba(97,95,255,0.5)] flex items-center justify-center text-white shrink-0">
+                      {f.icon}
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-semibold">{f.title}</p>
+                      <p className="text-[#c6d2ff] text-sm">{f.desc}</p>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex gap-8">
+            {[
+              { val: "10K+", label: "Teams" },
+              { val: "50K+", label: "Tasks Daily" },
+              { val: "99.9%", label: "Uptime" },
+            ].map((s) => (
+                <div key={s.label}>
+                  <p className="text-white text-2xl font-bold">{s.val}</p>
+                  <p className="text-[#a3b3ff] text-sm">{s.label}</p>
+                </div>
+            ))}
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.08] shadow-sm p-8">
-          <Suspense fallback={<div className="text-sm text-[#6a7282]">Loading…</div>}>
-            <ResetPasswordForm />
-          </Suspense>
+
+        {/* Right Panel - Form */}
+        <div className="flex-1 flex items-center justify-center bg-[#f8fafc] px-6 py-12">
+          <div className="w-full max-w-[400px]">
+            {/* Mobile Logo */}
+            <div className="flex items-center gap-3 mb-10 lg:hidden justify-center">
+              <div className="w-10 h-10 rounded-[14px] bg-[#4f39f6] flex items-center justify-center">
+                <CheckCircle2 size={20} className="text-white" />
+              </div>
+              <span className="text-[#0a0a0a] text-xl font-bold">TaskFlow</span>
+            </div>
+
+            <Suspense fallback={<div className="text-sm text-[#717182]">Loading…</div>}>
+              <ResetPasswordForm />
+            </Suspense>
+          </div>
         </div>
       </div>
-    </div>
   );
 }

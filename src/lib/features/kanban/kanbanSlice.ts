@@ -34,7 +34,7 @@ const initialState: KanbanState = {
             dotColor: "#94a3b8",
             cards: [
                 { id: "c1", title: "Research competitor pricing", tag: "Research", tagColor: "#6554c0", tagBg: "#f3f0ff", priority: "low", checked: false },
-                { id: "c2", title: "Define Q3 OKRs & key results", tag: "Strategy", tagColor: "#0052cc", tagBg: "#e9f0ff", priority: "medium", dueDate: "Apr 30", checked: false },
+                { id: "c2", title: "Define Q3 OKRs & key results", tag: "Strategy", tagColor: "#6C5CE7", tagBg: "#F0EDFF", priority: "medium", dueDate: "Apr 30", checked: false },
             ],
         },
         {
