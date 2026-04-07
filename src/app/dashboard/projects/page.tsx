@@ -26,7 +26,6 @@ import { createProjectSchema, updateProjectSchema } from "@/lib/schemas";
 import type { z } from "zod";
 import ProjectTasksPanel from "@/components/team/ProjectTasksPanel";
 
-/* ── Constants ──────────────────────────────────────────────────── */
 const STATUS_STYLE: Record<string, string> = {
   in_progress: "bg-[#F0EDFF] text-[#6C5CE7] border-[#cce0ff]",
   almost_done: "bg-[#D1FAE5] text-[#10B981] border-[#b3f5d5]",
@@ -43,7 +42,6 @@ const STATUS_LABEL: Record<string, string> = {
 
 const PROJECT_COLORS = [
   "#6C5CE7",
-  "#6C5CE7",
   "#f6339a",
   "#ff6900",
   "#10B981",
@@ -57,7 +55,6 @@ function Skeleton() {
   return <div className="animate-pulse bg-[#F1F5F9] rounded-xl h-52" />;
 }
 
-/* ── New Project Modal ──────────────────────────────────────────── */
 type CreateForm = z.infer<typeof createProjectSchema>;
 
 function NewProjectModal({ onClose }: { onClose: () => void }) {
@@ -80,42 +77,47 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
   const [apiError, setApiError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    setApiError("");
+  e.preventDefault();
+  setErrors({});
+  setApiError("");
 
-    const result = createProjectSchema.safeParse(form);
-    if (!result.success) {
-      const fe: Partial<Record<keyof CreateForm, string>> = {};
-      for (const issue of result.error.issues) {
-        const k = issue.path[0] as keyof CreateForm;
-        if (!fe[k]) fe[k] = issue.message;
-      }
-      setErrors(fe);
-      return;
+  const result = createProjectSchema.safeParse(form);
+  if (!result.success) {
+    const fe: Partial<Record<keyof CreateForm, string>> = {};
+    for (const issue of result.error.issues) {
+      const k = issue.path[0] as keyof CreateForm;
+      if (!fe[k]) fe[k] = issue.message;
     }
+    setErrors(fe);
+    return;
+  }
 
-    try {
-      const payload: Record<string, string> = {
-        name: result.data.name,
-        color: result.data.color,
-      };
+  try {
+    // Build payload, only include optional fields if they exist
+    const payload: {
+      name: string;
+      color: string;
+      description?: string;
+      startDate?: string;
+      dueDate?: string;
+      teamId?: string;
+    } = {
+      name: result.data.name,
+      color: result.data.color,
+    };
 
-      if (result.data.description) payload.description = result.data.description;
-      if (result.data.startDate) payload.startDate = result.data.startDate;
-      if (result.data.dueDate) payload.dueDate = result.data.dueDate;
-      if (result.data.teamId) payload.teamId = result.data.teamId;
+    if (result.data.description) payload.description = result.data.description;
+    if (result.data.startDate) payload.startDate = result.data.startDate;
+    if (result.data.dueDate) payload.dueDate = result.data.dueDate;
+    if (result.data.teamId) payload.teamId = result.data.teamId;
+    await createProject(payload).unwrap();
 
-      await createProject(
-        payload as Parameters<typeof createProject>[0]
-      ).unwrap();
-
-      onClose();
-    } catch (err: unknown) {
-      const e = err as { data?: { message?: string } };
-      setApiError(e?.data?.message ?? "Failed to create project.");
-    }
-  };
+    onClose();
+  } catch (err: unknown) {
+    const e = err as { data?: { message?: string } };
+    setApiError(e?.data?.message ?? "Failed to create project.");
+  }
+};
 
   return (
     <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">

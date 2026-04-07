@@ -7,6 +7,7 @@ import {
   UserPlus,
   Users,
   Search,
+  Plus,
 } from "lucide-react";
 
 import type { Project, Team } from "@/lib/features/types/task-type";
@@ -24,6 +25,9 @@ import {
 import InviteModal from "./modals/InviteModal";
 import ProjectTasksPanel from "./ProjectTasksPanel";
 
+// Import your Create Project Modal (adjust path as needed)
+import CreateProjectModal from "../team/modals/CreateProjectModal"; 
+
 type Props = {
   team: Team;
   idx: number;
@@ -32,6 +36,7 @@ type Props = {
 
 export default function TeamDetailView({ team, idx, onBack }: Props) {
   const [showInvite, setShowInvite] = useState(false);
+  const [showCreateProject, setShowCreateProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projectSearch, setProjectSearch] = useState("");
 
@@ -52,35 +57,50 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Header with gradient */}
       <div className={`bg-gradient-to-r ${gradientCls} px-6 pt-6 pb-5`}>
-        <div className="flex items-start gap-4">
-          <button
-            onClick={onBack}
-            className="mt-0.5 w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors shrink-0"
-          >
-            <ArrowLeft size={15} />
-          </button>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <button
+              onClick={onBack}
+              className="mt-0.5 w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors shrink-0"
+            >
+              <ArrowLeft size={15} />
+            </button>
 
-          <div className="flex-1 min-w-0">
-            <p className="text-white/70 text-xs font-medium mb-0.5">Team</p>
-            <h2 className="text-white text-xl font-bold truncate">{team.name}</h2>
-            {team.description && (
-              <p className="text-white/80 text-sm mt-1 line-clamp-2">
-                {team.description}
-              </p>
-            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-white/70 text-xs font-medium mb-0.5">Team</p>
+              <h2 className="text-white text-xl font-bold truncate">{team.name}</h2>
+              {team.description && (
+                <p className="text-white/80 text-sm mt-1 line-clamp-2">
+                  {team.description}
+                </p>
+              )}
+            </div>
           </div>
 
-          <button
-            onClick={() => setShowInvite(true)}
-            className="flex items-center gap-1.5 px-3 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors shrink-0"
-          >
-            <UserPlus size={13} />
-            Invite
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setShowInvite(true)}
+              className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors"
+            >
+              <UserPlus size={14} />
+              Invite
+            </button>
+
+            {/* New Project Button - Clean & Consistent Style */}
+            <button
+              onClick={() => setShowCreateProject(true)}
+              className="flex items-center gap-1.5 px-4 h-9 rounded-xl bg-white text-slate-900 hover:bg-white/90 font-semibold text-sm transition-all active:scale-[0.98]"
+            >
+              <Plus size={15} />
+              New Project
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-4">
+        {/* Stats Row */}
+        <div className="flex items-center gap-4 mt-6">
           <div className="flex items-center gap-1.5 text-white/90 text-sm">
             <Users size={14} />
             <span className="font-semibold">{team.memberCount}</span>
@@ -117,7 +137,9 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Projects Sidebar */}
         <div className="w-56 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 overflow-auto">
           <div className="px-4 pt-4 pb-2">
             <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
@@ -188,14 +210,13 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
           )}
         </div>
 
+        {/* Project Tasks Area */}
         <div className="flex-1 overflow-hidden bg-white dark:bg-slate-900">
           {selectedProject ? (
             <ProjectTasksPanel project={selectedProject} />
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center p-8">
-              <div
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center ${iconBgCls}`}
-              >
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${iconBgCls}`}>
                 <FolderKanban size={22} />
               </div>
               <p className="text-base font-semibold text-slate-700 dark:text-slate-200">
@@ -209,8 +230,16 @@ export default function TeamDetailView({ team, idx, onBack }: Props) {
         </div>
       </div>
 
+      {/* Modals */}
       {showInvite && (
         <InviteModal teamId={team.id} onClose={() => setShowInvite(false)} />
+      )}
+
+      {showCreateProject && (
+        <CreateProjectModal
+          defaultTeamId={team.id}        // Pre-selects this team in the modal
+          onClose={() => setShowCreateProject(false)}
+        />
       )}
     </div>
   );

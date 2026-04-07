@@ -153,7 +153,6 @@ function NewTaskModal({ defaultStatus, onClose }: { defaultStatus?: TaskStatus; 
   );
 }
 
-/* ── Comments Drawer ────────────────────────────────────────────── */
 function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) {
   const { data: pageData, isLoading } = useGetCommentsQuery({ taskId: task.id });
   const comments: Comment[] = pageData?.content ?? [];
@@ -275,7 +274,6 @@ function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) 
   );
 }
 
-/* ── Task Card ──────────────────────────────────────────────────── */
 function TaskCard({
   task, col, onMove, onDelete, onComment,
 }: {

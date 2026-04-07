@@ -11,9 +11,8 @@ export type NotificationType =
   | "INVITATION_ACCEPTED"
   | "COMMENT_ADDED"
   | "PROJECT_UPDATED"
-  | "TEAM_INVITATION";   // ← this type carries a referenceId for acceptInvitation
+  | "TEAM_INVITATION";
 
-// ── Pagination ─────────────────────────────────────────────────────────────
 export interface PageResponse<T> {
   content: T[];
   totalElements: number;
@@ -22,7 +21,6 @@ export interface PageResponse<T> {
   size: number;
 }
 
-// ── Auth ───────────────────────────────────────────────────────────────────
 export interface AuthUser {
   id: string;
   name: string;
