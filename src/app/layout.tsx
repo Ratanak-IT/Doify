@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { cn } from "@/lib/utils";
+import NavbarWrapper from "@/components/layout/NavbarWrapper";
+
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -18,7 +20,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
       <html lang="en" className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}>
       <body className="min-h-full flex flex-col bg-white" suppressHydrationWarning>
-      <StoreProvider>{children}</StoreProvider>
+      <StoreProvider>
+        <NavbarWrapper/>
+        {children}
+        </StoreProvider>
       </body>
       </html>
   );

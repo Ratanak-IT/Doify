@@ -289,7 +289,7 @@ function TaskCard({
     >
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-medium text-[#1E293B] leading-snug">{task.title}</p>
-        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+        <div className="flex gap-0.5">
           <button onClick={() => onComment(task)} title="Comments" className="w-6 h-6 flex items-center justify-center text-[#94A3B8] hover:text-[#6C5CE7]">
             <MessageSquare size={13} />
           </button>
@@ -331,7 +331,7 @@ function TaskCard({
         )}
       </div>
 
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-wrap">
+      <div className="flex gap-1 flex-wrap">
         {COLUMNS.filter((c) => c.id !== task.status).map((c) => (
           <button key={c.id} onClick={() => onMove(task.id, c.id)}
             className="text-[9px] px-1.5 py-0.5 rounded border border-[#D1D5DB] text-[#94A3B8] hover:border-[#6C5CE7] hover:text-[#6C5CE7] transition-colors font-medium">

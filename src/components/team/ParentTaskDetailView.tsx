@@ -200,9 +200,8 @@ function SubtaskCard({
           )}
         </div>
 
-        {/* Action buttons — visible on hover, same as TeamTaskCard */}
         {!editing && (
-          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+          <div className="flex gap-0.5 shrink-0">
             <button
               onClick={() => setEditing(true)}
               className="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-blue-600"
@@ -404,7 +403,7 @@ export default function ParentTaskDetailView({
                   >
                     {isLoading
                       ? Array.from({ length: 2 }).map((_, i) => (
-                          <div key={i} className="animate-pulse bg-white rounded-lg h-28 opacity-60" />
+                          <div key={i} className="animate-pulse bg-white rounded-lg h-28" />
                         ))
                       : colTasks.map((subtask) => (
                           <SubtaskCard

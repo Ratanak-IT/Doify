@@ -203,7 +203,7 @@ function SubtaskRow({
             </div>
             <button
               onClick={() => setEditing(true)}
-              className="opacity-0 group-hover/subtask:opacity-100 transition-opacity w-5 h-5 flex items-center justify-center text-slate-400 hover:text-blue-600 shrink-0"
+              className=" w-5 h-5 flex items-center justify-center text-slate-400 hover:text-blue-600 shrink-0"
               title="Edit subtask"
             >
               <Edit2 size={11} />
@@ -309,7 +309,7 @@ function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) 
                   <div className="flex items-baseline gap-2">
                     <span className="text-xs font-semibold text-slate-900 dark:text-white">{authorName}</span>
                     <span className="text-[10px] text-slate-400">{timeAgo(c.createdAt)}</span>
-                    <div className="ml-auto opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
+                    <div className="ml-auto flex gap-1">
                       <button
                         onClick={() => { setEditId(c.id); setEditText(c.content); }}
                         className="text-slate-400 hover:text-blue-600"
@@ -367,7 +367,7 @@ function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) 
             <button
               onClick={submit}
               disabled={posting || !text.trim()}
-              className="w-9 h-9 rounded-md bg-blue-600 text-white flex items-center justify-center disabled:opacity-40 hover:bg-blue-700 transition-colors"
+              className="w-9 h-9 rounded-md bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors"
             >
               <Send size={14} />
             </button>
@@ -471,7 +471,7 @@ function TeamTaskCard({
 
         {/* Action buttons */}
         {!editing && (
-          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+          <div className="flex gap-0.5 shrink-0">
             <button
               onClick={() => setEditing(true)}
               className="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-blue-600"
