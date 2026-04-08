@@ -1,24 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { selectCard, moveCard } from "@/lib/features/kanban/kanbanSlice";
+import Navbar from "@/components/NavBar";
+
 
 const FEATURES = [
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="5.5" height="18" rx="2" fill="currentColor" opacity=".9"/><rect x="9.5" y="2" width="10.5" height="12" rx="2" fill="currentColor" opacity=".5"/></svg>), title: "Kanban Boards", desc: "Drag cards across columns and see the whole project at a glance. Backlog to shipped, always in focus.", color: "#6C5CE7", bg: "#e9f2ff" },
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="18" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="9.5" width="14" height="3" rx="1.5" fill="currentColor" opacity=".6"/><rect x="2" y="15" width="10" height="3" rx="1.5" fill="currentColor" opacity=".35"/></svg>), title: "Smart Lists", desc: "Filter, sort, and group tasks any way you need. Deadline view, priority view, assignee view — all instant.", color: "#216e4e", bg: "#dcfff1" },
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2"/><path d="M6 11l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>), title: "Rich Task Cards", desc: "Each card holds checklists, due dates, attachments, comments, and assignees — everything in one place.", color: "#5e4db2", bg: "#f3f0ff" },
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2v4M11 16v4M2 11h4M16 11h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><circle cx="11" cy="11" r="4" fill="currentColor" opacity=".3"/><circle cx="11" cy="11" r="2" fill="currentColor"/></svg>), title: "Automation", desc: "Let repetitive work handle itself. Set triggers and actions so your workflow runs on autopilot.", color: "#a54800", bg: "#fff3eb" },
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="7" cy="7" r="4" stroke="currentColor" strokeWidth="2"/><circle cx="15" cy="15" r="4" stroke="currentColor" strokeWidth="2"/><path d="M11 7h6M7 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity=".5"/></svg>), title: "Team Workspaces", desc: "Invite teammates, assign tasks, and collaborate in shared workspaces with role-based permissions.", color: "#0055cc", bg: "#e9f2ff" },
-  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l4-4 3 3 4-5 5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="2" y="2" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" opacity=".4"/></svg>), title: "Reports & Insights", desc: "Track velocity, spot blockers, and forecast delivery. Real-time charts that actually make sense.", color: "#ae2e24", bg: "#ffeceb" },
-];
-
-const TEAM_MEMBERS = [
-  { name: "Alex Rivera", role: "Founder & CEO", initials: "AR", color: "#6C5CE7", bg: "#e9f2ff", desc: "Ex-Notion product lead. Obsessed with building tools that feel magical instead of overwhelming." },
-  { name: "Jordan Hale", role: "Head of Design", initials: "JH", color: "#216e4e", bg: "#dcfff1", desc: "Former Figma designer. The person behind every beautiful pixel you see in TaskFlow." },
-  { name: "Sam Chen", role: "CTO", initials: "SC", color: "#5e4db2", bg: "#f3f0ff", desc: "Ex-Linear engineer. Lives for clean code, instant drag-and-drop, and zero lag." },
-  { name: "Taylor Kim", role: "Head of Growth", initials: "TK", color: "#a54800", bg: "#fff3eb", desc: "Grew the community to 50,000+ users. Turns your feedback into new features every week." },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="5.5" height="18" rx="2" fill="currentColor" opacity=".9" /><rect x="9.5" y="2" width="10.5" height="12" rx="2" fill="currentColor" opacity=".5" /></svg>), title: "Kanban Boards", desc: "Drag cards across columns and see the whole project at a glance. Backlog to shipped, always in focus.", color: "#6C5CE7", bg: "#e9f2ff" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="18" height="3" rx="1.5" fill="currentColor" /><rect x="2" y="9.5" width="14" height="3" rx="1.5" fill="currentColor" opacity=".6" /><rect x="2" y="15" width="10" height="3" rx="1.5" fill="currentColor" opacity=".35" /></svg>), title: "Smart Lists", desc: "Filter, sort, and group tasks any way you need. Deadline view, priority view, assignee view — all instant.", color: "#216e4e", bg: "#dcfff1" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2" /><path d="M6 11l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>), title: "Rich Task Cards", desc: "Each card holds checklists, due dates, attachments, comments, and assignees — everything in one place.", color: "#5e4db2", bg: "#f3f0ff" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2v4M11 16v4M2 11h4M16 11h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><circle cx="11" cy="11" r="4" fill="currentColor" opacity=".3" /><circle cx="11" cy="11" r="2" fill="currentColor" /></svg>), title: "Automation", desc: "Let repetitive work handle itself. Set triggers and actions so your workflow runs on autopilot.", color: "#a54800", bg: "#fff3eb" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="7" cy="7" r="4" stroke="currentColor" strokeWidth="2" /><circle cx="15" cy="15" r="4" stroke="currentColor" strokeWidth="2" /><path d="M11 7h6M7 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity=".5" /></svg>), title: "Team Workspaces", desc: "Invite teammates, assign tasks, and collaborate in shared workspaces with role-based permissions.", color: "#0055cc", bg: "#e9f2ff" },
+  { icon: (<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l4-4 3 3 4-5 5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="2" y="2" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" opacity=".4" /></svg>), title: "Reports & Insights", desc: "Track velocity, spot blockers, and forecast delivery. Real-time charts that actually make sense.", color: "#ae2e24", bg: "#ffeceb" },
 ];
 
 const TESTIMONIALS = [
@@ -60,7 +55,7 @@ function KanbanDemo() {
           <span style={{ background: "#28c840" }} />
         </div>
         <div className="kb-title-bar">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="4.5" height="12" rx="1.2" fill="#fff"/><rect x="8.5" y="2" width="5.5" height="8" rx="1.2" fill="#fff" opacity=".7"/></svg>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="4.5" height="12" rx="1.2" fill="#fff" /><rect x="8.5" y="2" width="5.5" height="8" rx="1.2" fill="#fff" opacity=".7" /></svg>
           <span>Website Redesign · Sprint 12</span>
         </div>
         <div className="kb-chrome-right">
@@ -137,56 +132,11 @@ function KanbanDemo() {
 }
 
 export default function HomePage() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
   return (
     <div className="lp-root">
 
-      {/* UPDATED HEADER / NAV */}
-      <nav className={`lp-nav${scrolled ? " lp-nav--scrolled" : ""}`}>
-        <div className="lp-nav-inner">
-          {/* TaskFlow Logo (kept your original logo) */}
-          <Link href="/" className="lp-logo-wrap">
-            <div className="lp-logo-mark">
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                <rect x="2" y="2" width="5" height="12" rx="1.5" fill="white" />
-                <rect x="9" y="2" width="5" height="8" rx="1.5" fill="white" opacity=".8" />
-              </svg>
-            </div>
-            <span className="lp-logo-text">TaskFlow</span>
-          </Link>
-
-          {/* Updated nav links – About Us now points to the separate /about page */}
-          <div className="lp-nav-links">
-            {["Features", "Templates", "About Us", "Enterprise"].map((item) => {
-              const href =
-                item === "About Us"
-                  ? "/about"                    // ← connects to your About page
-                  : `#${item.toLowerCase()}`;
-              return (
-                <Link
-                  key={item}
-                  href={href}
-                  className="lp-nav-link"
-                >
-                  {item}
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="lp-nav-actions">
-            <Link href="/login" className="lp-btn-ghost">Log in</Link>
-            <Link href="/register" className="lp-btn-primary lp-btn-sm">Get started free</Link>
-          </div>
-        </div>
-      </nav>
+      {/* ✅ Single shared Navbar — no more inline <nav> */}
+      <Navbar />
 
       {/* HERO */}
       <section className="lp-hero">
@@ -208,7 +158,7 @@ export default function HomePage() {
             <Link href="/register" className="lp-btn-primary lp-btn-lg lp-btn-hero">Start for free — no credit card</Link>
             <Link href="/login" className="lp-btn-outline lp-btn-lg">
               Sign in to workspace
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
           </div>
           <p className="lp-hero-trust lp-anim-4">Trusted by 50,000+ teams at startups, agencies, and Fortune 500s</p>
@@ -254,12 +204,12 @@ export default function HomePage() {
           <div className="lp-hiw-grid">
             <div className="lp-hiw-content">
               <span className="lp-eyebrow lp-eyebrow--green">How it works</span>
-              <h2 className="lp-section-title">From backlog to shipped<br/>in minutes</h2>
+              <h2 className="lp-section-title">From backlog to shipped<br />in minutes</h2>
               <div className="lp-steps">
                 {[
-                  { num: "01", title: "Create your board",        desc: "Set up a project in seconds. Add columns to match exactly how your team works — no rigid templates." },
-                  { num: "02", title: "Add cards for every task",  desc: "Each card holds everything: description, checklist, due date, files, and team conversations." },
-                  { num: "03", title: "Move work forward",         desc: "Drag cards across columns as work progresses. Everyone sees the same source of truth, in real time." },
+                  { num: "01", title: "Create your board", desc: "Set up a project in seconds. Add columns to match exactly how your team works — no rigid templates." },
+                  { num: "02", title: "Add cards for every task", desc: "Each card holds everything: description, checklist, due date, files, and team conversations." },
+                  { num: "03", title: "Move work forward", desc: "Drag cards across columns as work progresses. Everyone sees the same source of truth, in real time." },
                 ].map((s) => (
                   <div key={s.num} className="lp-step">
                     <div className="lp-step-num">{s.num}</div>
@@ -276,9 +226,9 @@ export default function HomePage() {
               </div>
               <div className="lp-preview-board">
                 {[
-                  { label: "To Do",       color: "#94a3b8", items: ["Research pricing", "Define OKRs", "Write tests"] },
+                  { label: "To Do", color: "#94a3b8", items: ["Research pricing", "Define OKRs", "Write tests"] },
                   { label: "In Progress", color: "#6C5CE7", items: ["Redesign onboarding", "API refactor"] },
-                  { label: "Done",        color: "#22c55e", items: ["v2.4 release", "Nav bug fix"] },
+                  { label: "Done", color: "#22c55e", items: ["v2.4 release", "Nav bug fix"] },
                 ].map((col, ci) => (
                   <div key={ci} className="lp-preview-col">
                     <div className="lp-preview-col-head">
@@ -307,7 +257,7 @@ export default function HomePage() {
           <div className="lp-testi-grid">
             {TESTIMONIALS.map((t, i) => (
               <div key={i} className="lp-testi-card">
-                <div className="lp-stars">{Array(5).fill(0).map((_, s) => (<svg key={s} width="14" height="14" viewBox="0 0 14 14" fill="#f59e0b"><path d="M7 1l1.545 3.09L12 4.635l-2.5 2.43.59 3.435L7 8.91l-3.09 1.59L4.5 7.065 2 4.635l3.455-.545z"/></svg>))}</div>
+                <div className="lp-stars">{Array(5).fill(0).map((_, s) => (<svg key={s} width="14" height="14" viewBox="0 0 14 14" fill="#f59e0b"><path d="M7 1l1.545 3.09L12 4.635l-2.5 2.43.59 3.435L7 8.91l-3.09 1.59L4.5 7.065 2 4.635l3.455-.545z" /></svg>))}</div>
                 <p className="lp-testi-text">&ldquo;{t.text}&rdquo;</p>
                 <div className="lp-testi-author">
                   <div className="lp-testi-av" style={{ background: t.color }}>{t.initials}</div>
@@ -323,7 +273,7 @@ export default function HomePage() {
       <section className="lp-section lp-section--white">
         <div className="lp-cta-wrap">
           <div className="lp-cta-icon">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="3" y="3" width="8" height="20" rx="2.5" fill="white"/><rect x="14" y="3" width="9" height="13" rx="2.5" fill="white" opacity=".75"/></svg>
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="3" y="3" width="8" height="20" rx="2.5" fill="white" /><rect x="14" y="3" width="9" height="13" rx="2.5" fill="white" opacity=".75" /></svg>
           </div>
           <h2 className="lp-cta-title">Get your team on the same page</h2>
           <p className="lp-cta-sub">Join 50,000+ teams who plan, track, and ship faster with TaskFlow.</p>
@@ -335,22 +285,87 @@ export default function HomePage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="lp-footer">
-        <div className="lp-footer-inner">
-          <div className="lp-footer-brand">
-            <div className="lp-logo-mark lp-logo-mark--sm">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="12" rx="1.5" fill="white"/><rect x="9" y="2" width="5" height="8" rx="1.5" fill="white" opacity=".8"/></svg>
+      <style>{`
+        .footer { background: #ffffff; border-top: 1px solid #e2e8f0; color: #6b7280; padding: 56px 32px 32px; font-family: 'Inter', sans-serif; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-brand-name { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .footer-logo-icon { width: 32px; height: 32px; border-radius: 8px; background: #6c47ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .footer-brand-text { font-weight: 700; font-size: 1rem; color: #1a1a2e; }
+        .footer-brand-desc { font-size: 0.82rem; line-height: 1.65; color: #6b7280; max-width: 240px; }
+        .footer-social { display: flex; gap: 10px; margin-top: 20px; }
+        .footer-social-btn { width: 34px; height: 34px; border-radius: 8px; background: #eef2f7; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #6b7280; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .footer-social-btn:hover { background: #ede9ff; color: #6c47ff; border-color: #6c47ff; }
+        .footer-social-btn svg { width: 15px; height: 15px; fill: currentColor; }
+        .footer-col h4 { font-size: 0.75rem; font-weight: 600; color: #1a1a2e; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .footer-col ul li a { font-size: 0.83rem; color: #6b7280; text-decoration: none; transition: color 0.15s; }
+        .footer-col ul li a:hover { color: #6c47ff; }
+        .footer-divider { border: none; border-top: 1px solid #e2e8f0; max-width: 1100px; margin: 0 auto 24px; }
+        .footer-bottom { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .footer-copy { font-size: 0.75rem; color: #94a3b8; }
+        @media (max-width: 860px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 480px) { .footer-inner { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; align-items: flex-start; } }
+      `}</style>
+
+      <footer className="footer">
+        <div className="footer-inner">
+          <div>
+            <div className="footer-brand-name">
+              <div className="footer-logo-icon">
+                <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+                  <path d="M3 5h14M3 10h10M3 15h7" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span className="footer-brand-text"></span>
             </div>
-            <span className="lp-footer-name">TaskFlow</span>
-            <span className="lp-footer-copy">© {new Date().getFullYear()}</span>
+            <p className="footer-brand-desc">Simplifying teamwork and productivity for everyone, everywhere.</p>
+            <div className="footer-social">
+              <button className="footer-social-btn" aria-label="Twitter">
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+              </button>
+              <button className="footer-social-btn" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+              </button>
+              <button className="footer-social-btn" aria-label="Globe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                </svg>
+              </button>
+            </div>
           </div>
-          <div className="lp-footer-links">
-            {["Privacy", "Terms", "Security", "Status", "Help"].map((item) => (
-              <a key={item} href="#" className="lp-footer-link">{item}</a>
-            ))}
+          <div className="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
+              <li><Link href="#">Careers</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Resources</h4>
+            <ul>
+              <li><Link href="#">Blog</Link></li>
+              <li><Link href="#">Help Center</Link></li>
+              <li><Link href="#">Privacy Policy</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li><Link href="#">Features</Link></li>
+              <li><Link href="#">Pricing</Link></li>
+              <li><Link href="#">Changelog</Link></li>
+            </ul>
           </div>
         </div>
+        <hr className="footer-divider" />
+        <div className="footer-bottom">
+          <span className="footer-copy">© 2026 TaskFlow. All rights reserved.</span>
+          <span className="footer-copy">Made with ♥ in Phnom Penh</span>
+        </div>
       </footer>
+
     </div>
   );
 }

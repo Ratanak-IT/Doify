@@ -4,8 +4,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
@@ -14,12 +13,26 @@ export const metadata: Metadata = {
   description: "Boards, lists, and cards. The simplest way to manage your projects.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-      <html lang="en" className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}>
+    <html
+      lang="en"
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        inter.variable
+      )}
+    >
       <body className="min-h-full flex flex-col bg-white" suppressHydrationWarning>
-      <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          <main className="flex-1">{children}</main>
+        </StoreProvider>
       </body>
-      </html>
+    </html>
   );
 }
