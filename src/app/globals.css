@@ -12,9 +12,6 @@ html, body { max-width: 100vw; overflow-x: hidden; }
 body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 a { color: inherit; text-decoration: none; }
 
-/* -----------------------------------------------
-   LANDING PAGE ROOT
------------------------------------------------ */
 .lp-root {
   min-height: 100vh;
   background: #fff;
@@ -423,10 +420,17 @@ a { color: inherit; text-decoration: none; }
 .lp-footer-links { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 .lp-footer-link  { font-size: 13px; color: #44526e; transition: color .15s; }
 .lp-footer-link:hover { color: #172b4d; }
+.lp-footer-nav   { display: flex; gap: 48px; flex-wrap: wrap; }
+.lp-footer-section { min-width: 140px; }
+.lp-footer-stack { display: flex; flex-direction: column; gap: 10px; }
+.lp-footer-title { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #172b4d; margin-bottom: 12px; }
+.lp-footer-brand-copy { margin-top: 6px; max-width: 340px; font-size: 13px; line-height: 1.7; color: #556080; }
+.lp-footer-bottom { width: 100%; margin-top: 26px; padding-top: 22px; border-top: 1px solid #e6e9f0; color: #8993a4; font-size: 13px; text-align: center; }
+@media (max-width: 768px) {
+  .lp-footer-inner { flex-direction: column; align-items: flex-start; }
+  .lp-footer-nav { width: 100%; }
+}
 
-/* -----------------------------------------------
-   DASHBOARD SHARED
------------------------------------------------ */
 .dot-grid {
   background-image: radial-gradient(circle, #dde1e7 1px, transparent 1px);
   background-size: 28px 28px;
@@ -445,3 +449,23 @@ a { color: inherit; text-decoration: none; }
     @apply bg-background text-foreground; }
   html {
     @apply font-sans; } }
+
+
+@font-face {
+  font-family: "Sovaphum";
+  src: url("../../public/Suwannaphum-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: "Poppins", "Sovaphum", sans-serif;
+}
+
+.font-sans {
+  font-family: "Poppins", "Sovaphum", sans-serif;
+}
+
+.font-khmer {
+  font-family: "Sovaphum", sans-serif;
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Plus, Search, Calendar, MoreHorizontal, RefreshCw,
   Trash2, MessageSquare, X, Send, Edit2, Check,
@@ -153,7 +154,6 @@ function NewTaskModal({ defaultStatus, onClose }: { defaultStatus?: TaskStatus; 
   );
 }
 
-/* ── Comments Drawer ────────────────────────────────────────────── */
 function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) {
   const { data: pageData, isLoading } = useGetCommentsQuery({ taskId: task.id });
   const comments: Comment[] = pageData?.content ?? [];
@@ -275,7 +275,6 @@ function CommentsDrawer({ task, onClose }: { task: Task; onClose: () => void }) 
   );
 }
 
-/* ── Task Card ──────────────────────────────────────────────────── */
 function TaskCard({
   task, col, onMove, onDelete, onComment,
 }: {
@@ -291,7 +290,7 @@ function TaskCard({
     >
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-medium text-[#1E293B] leading-snug">{task.title}</p>
-        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+        <div className="flex gap-0.5">
           <button onClick={() => onComment(task)} title="Comments" className="w-6 h-6 flex items-center justify-center text-[#94A3B8] hover:text-[#6C5CE7]">
             <MessageSquare size={13} />
           </button>
@@ -333,7 +332,7 @@ function TaskCard({
         )}
       </div>
 
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-wrap">
+      <div className="flex gap-1 flex-wrap">
         {COLUMNS.filter((c) => c.id !== task.status).map((c) => (
           <button key={c.id} onClick={() => onMove(task.id, c.id)}
             className="text-[9px] px-1.5 py-0.5 rounded border border-[#D1D5DB] text-[#94A3B8] hover:border-[#6C5CE7] hover:text-[#6C5CE7] transition-colors font-medium">
@@ -347,6 +346,9 @@ function TaskCard({
 
 /* ── Page ───────────────────────────────────────────────────────── */
 export default function TasksPage() {
+  const searchParams = useSearchParams();
+  const taskId = searchParams?.get("taskId");
+
   const [search, setSearch]           = useState("");
   const [showModal, setModal]         = useState(false);
   const [defaultStatus, setDefault]   = useState<TaskStatus | undefined>();
@@ -356,6 +358,14 @@ export default function TasksPage() {
   const tasks: Task[] = pageData?.content ?? [];
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
+
+  useEffect(() => {
+    if (!taskId || commentTask || isLoading) return;
+    const task = tasks.find((t) => t.id === taskId);
+    if (task) {
+      setCommentTask(task);
+    }
+  }, [taskId, tasks, isLoading, commentTask]);
 
   const handleMove   = (id: string, status: TaskStatus) => updateTask({ id, data: { status } });
   const handleDelete = (id: string) => deleteTask(id);
@@ -394,7 +404,7 @@ export default function TasksPage() {
           {COLUMNS.map((col) => {
             const colTasks = tasks.filter((t) => t.status === col.id);
             return (
-              <div key={col.id} className="w-[272px] flex flex-col gap-0">
+              <div key={col.id} className="w-68 flex flex-col gap-0">
                 <div className="flex items-center justify-between mb-3 px-1">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: col.dot }} />

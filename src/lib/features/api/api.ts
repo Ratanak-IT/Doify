@@ -9,12 +9,8 @@ function getTokenFromCookie(): string | null {
 
 export const baseApi = createApi({
   reducerPath: "baseApi",
-  // FIX: baseUrl must point to the Next.js proxy routes (/api/...),
-  // NOT directly to the external API (taskflow-api-682258391368...).
-  // Direct calls to the external API are blocked by CORS in the browser.
-  // All requests go through /api/* which server-side proxies to the backend.
   baseQuery: fetchBaseQuery({
-    baseUrl: "/api",
+    baseUrl: "/api/v1",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token ?? getTokenFromCookie();
       if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -22,8 +18,6 @@ export const baseApi = createApi({
     },
     responseHandler: async (response) => {
       const text = await response.text();
-      // FIX: return null (not undefined) for empty 204 No Content responses.
-      // RTK Query requires { data: <value> } — undefined is rejected, null is valid.
       if (!text) return null;
       try {
         const json = JSON.parse(text);

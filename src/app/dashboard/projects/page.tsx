@@ -26,7 +26,6 @@ import { createProjectSchema, updateProjectSchema } from "@/lib/schemas";
 import type { z } from "zod";
 import ProjectTasksPanel from "@/components/team/ProjectTasksPanel";
 
-/* ── Constants ──────────────────────────────────────────────────── */
 const STATUS_STYLE: Record<string, string> = {
   in_progress: "bg-[#F0EDFF] text-[#6C5CE7] border-[#cce0ff]",
   almost_done: "bg-[#D1FAE5] text-[#10B981] border-[#b3f5d5]",
@@ -43,7 +42,6 @@ const STATUS_LABEL: Record<string, string> = {
 
 const PROJECT_COLORS = [
   "#6C5CE7",
-  "#6C5CE7",
   "#f6339a",
   "#ff6900",
   "#10B981",
@@ -57,7 +55,6 @@ function Skeleton() {
   return <div className="animate-pulse bg-[#F1F5F9] rounded-xl h-52" />;
 }
 
-/* ── New Project Modal ──────────────────────────────────────────── */
 type CreateForm = z.infer<typeof createProjectSchema>;
 
 function NewProjectModal({ onClose }: { onClose: () => void }) {
@@ -96,19 +93,25 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
     }
 
     try {
-      const payload: Record<string, string> = {
+      // Build payload, only include optional fields if they exist
+      const payload: {
+        name: string;
+        color: string;
+        description?: string;
+        startDate?: string;
+        dueDate?: string;
+        teamId?: string;
+      } = {
         name: result.data.name,
         color: result.data.color,
       };
 
-      if (result.data.description) payload.description = result.data.description;
+      if (result.data.description)
+        payload.description = result.data.description;
       if (result.data.startDate) payload.startDate = result.data.startDate;
       if (result.data.dueDate) payload.dueDate = result.data.dueDate;
       if (result.data.teamId) payload.teamId = result.data.teamId;
-
-      await createProject(
-        payload as Parameters<typeof createProject>[0]
-      ).unwrap();
+      await createProject(payload).unwrap();
 
       onClose();
     } catch (err: unknown) {
@@ -179,7 +182,9 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
               <input
                 type="date"
                 value={form.startDate}
-                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, startDate: e.target.value })
+                }
                 className="w-full h-10 px-3 rounded-md border border-[#D1D5DB] text-sm outline-none focus:border-[#6C5CE7] bg-white transition-colors"
               />
             </div>
@@ -249,7 +254,7 @@ function NewProjectModal({ onClose }: { onClose: () => void }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors disabled:opacity-60"
+              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
             >
               {isLoading ? "Creating…" : "Create Project"}
             </button>
@@ -405,7 +410,7 @@ function EditProjectModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors disabled:opacity-60"
+              className="flex-1 h-9 rounded-md bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
             >
               {isLoading ? "Saving…" : "Save Changes"}
             </button>
@@ -431,11 +436,17 @@ function ProjectCard({
   const [menuOpen, setMenuOpen] = useState(false);
   const progress = Math.min(100, Math.max(0, project.progress ?? 0));
   const statusKey = project.status ?? "active";
+  function formatDate(dateStr: string) {
+  const months = ["Jan","Feb","Mar","Apr","May","Jun",
+                  "Jul","Aug","Sep","Oct","Nov","Dec"];
+  const d = new Date(dateStr);
+  return `${months[d.getUTCMonth()]} ${d.getUTCDate()}`;
+}
 
   return (
     <div
       onClick={() => onSelect(project)}
-      className="bg-white rounded-xl border border-[#E8E8EF] overflow-hidden hover:shadow-md transition-all group cursor-pointer"
+      className="bg-white rounded-xl border border-[#E8E8EF] overflow-hidden hover:shadow-sm transition-all group cursor-pointer"
     >
       <div className="h-2" style={{ backgroundColor: project.color }} />
 
@@ -443,7 +454,7 @@ function ProjectCard({
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <div
-              className="w-7 h-7 rounded-md flex items-center justify-center text-white text-xs font-bold shrink-0"
+              className="w-7 h-7 rounded-md flex items-center justify-center text-white text-md font-bold shrink-0"
               style={{ backgroundColor: project.color }}
             >
               {project.name[0].toUpperCase()}
@@ -463,7 +474,7 @@ function ProjectCard({
           <div className="relative" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setMenuOpen((o) => !o)}
-              className="w-7 h-7 flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] rounded opacity-0 group-hover:opacity-100 transition-all"
+              className="w-7 h-7 flex items-center justify-center text-[#94A3B8] hover:bg-[#F1F5F9] rounded transition-all"
             >
               <MoreHorizontal size={14} />
             </button>
@@ -512,7 +523,7 @@ function ProjectCard({
         )}
 
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-[#94A3B8]">
+          <div className="flex justify-between text-md py-3 text-[#94A3B8]">
             <span>Progress</span>
             <span className="font-semibold">{progress}%</span>
           </div>
@@ -527,7 +538,7 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-[#94A3B8]">
+        <div className="flex items-center justify-between pt-3 text-md text-[#94A3B8]">
           <span className="flex items-center gap-1">
             <TrendingUp size={11} /> {project.tasksDone ?? 0}/
             {project.tasksCount ?? 0} tasks
@@ -542,10 +553,7 @@ function ProjectCard({
           {project.dueDate && (
             <span className="flex items-center gap-1">
               <Calendar size={11} />
-              {new Date(project.dueDate).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
+              {formatDate(project.dueDate)}
             </span>
           )}
         </div>
@@ -561,14 +569,17 @@ export default function ProjectsPage() {
   const [editProject, setEdit] = useState<Project | null>(null);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
-  const { data: pageData, isLoading, isError, refetch } = useGetProjectsQuery(
-    {}
-  );
+  const {
+    data: pageData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetProjectsQuery({});
   const projects: Project[] = pageData?.content ?? [];
   const [deleteProject] = useDeleteProjectMutation();
 
   const filtered = projects.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
+    p.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   if (activeProject) {

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Team } from "@/lib/features/types/task-type";
 import {
   useDeleteTeamMutation,
   useGetTeamsQuery,
 } from "@/lib/features/team/teamApi";
+import { useGetTaskQuery, useGetProjectQuery } from "@/lib/features/tasks/taskApi";
 
 import TeamHeader from "./TeamHeader";
 import TeamGrid from "./TeamGrid";
@@ -14,14 +16,29 @@ import CreateTeamModal from "./modals/CreateTeamModal";
 import EditTeamModal from "./modals/EditTeamModal";
 
 export default function TeamPageClient() {
+  const searchParams = useSearchParams();
+  const taskId = searchParams?.get("taskId");
+
   const [showCreate, setShowCreate] = useState(false);
   const [editTeam, setEditTeam] = useState<Team | null>(null);
   const [activeTeam, setActiveTeam] = useState<{ team: Team; idx: number } | null>(null);
 
   const { data: teamsPage, isLoading, refetch } = useGetTeamsQuery({});
   const [deleteTeam] = useDeleteTeamMutation();
+  const { data: task } = useGetTaskQuery(taskId || "", { skip: !taskId });
+  const { data: project } = useGetProjectQuery(task?.projectId || "", { skip: !task?.projectId });
 
   const teams = teamsPage?.content ?? [];
+
+  useEffect(() => {
+    if (project && project.teamId && teams.length > 0 && !activeTeam) {
+      const team = teams.find((t) => t.id === project.teamId);
+      if (team) {
+        const idx = teams.indexOf(team);
+        setActiveTeam({ team, idx });
+      }
+    }
+  }, [project, teams, activeTeam]);
 
   if (activeTeam) {
     return (
