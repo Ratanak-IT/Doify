@@ -12,6 +12,8 @@ import {
   ChevronRight,
   MoreHorizontal,
   Calendar,
+  Users,
+  FolderKanban,
 } from "lucide-react";
 import { useAppSelector } from "@/lib/hooks";
 import {
@@ -20,6 +22,7 @@ import {
   useGetRecentActivityQuery,
   useGetProjectsQuery,
 } from "@/lib/features/tasks/taskApi";
+import { useGetTeamsQuery } from "@/lib/features/team/teamApi";
 import { useGetUnreadCountQuery } from "@/lib/features/notifications/notificationsApi";
 import { StatCard } from "@/components/Card";
 import { TextCard } from "@/components/TextCard";
@@ -158,7 +161,7 @@ function TaskActivityChart() {
 
 function Skeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`animate-pulse bg-[#F1F5F9] rounded-lg ${className}`} />
+    <div className={`animate-pulse bg-[#F1F5F9] dark:bg-slate-700 rounded-lg ${className}`} />
   );
 }
 
@@ -180,12 +183,15 @@ export default function DashboardPage() {
         day: "numeric",
       })
     : "";
-  const { data: stats, isLoading: statsLoading } = useGetDashboardStatsQuery();
+  const { data: stats, isLoading: statsLoading, error: statsError } = useGetDashboardStatsQuery();
   const { data: activity, isLoading: activityLoading } =
     useGetRecentActivityQuery();
   const { data: projectsPage, isLoading: projectsLoading } =
     useGetProjectsQuery({});
   const projects = projectsPage?.content ?? [];
+  const { data: teamsPage, isLoading: teamsLoading } = useGetTeamsQuery({});
+  const teamsCount = teamsPage?.totalElements ?? 0;
+  const projectsCount = projectsPage?.totalElements ?? 0;
   const { data: myTasksPage, isLoading: tasksLoading } =
     useGetPersonalTasksQuery({ status: "IN_PROGRESS" });
   const myTasks = myTasksPage?.content ?? [];
@@ -196,50 +202,48 @@ export default function DashboardPage() {
     setMounted(true);
   }, []);
 
-  const statCards = stats
-    ? [
-        {
-          label: "Total Tasks",
-          value: stats.totalTasks,
-          change: stats.totalTasksChange,
-          changeLabel: "from last week",
-          trend: "up" as const,
-          icon: <ListTodo size={18} className="text-[#6C5CE7]" />,
-          iconBg: "bg-[#F0EDFF]",
-        },
-        {
-          label: "In Progress",
-          value: stats.inProgress,
-          change: stats.inProgressChange,
-          changeLabel: "from yesterday",
-          trend: "up" as const,
-          icon: <Clock size={18} className="text-[#F59E0B]" />,
-          iconBg: "bg-[#FEF9C3]",
-        },
-        {
-          label: "Completed",
-          value: stats.completed,
-          change: stats.completedChange,
-          changeLabel: "",
-          trend: "up" as const,
-          icon: <CheckCircle2 size={18} className="text-[#10B981]" />,
-          iconBg: "bg-[#D1FAE5]",
-        },
-        {
-          label: "Overdue",
-          value: stats.overdue,
-          change: stats.overdueChange,
-          changeLabel: "",
-          trend: "down" as const,
-          icon: <AlertTriangle size={18} className="text-[#EF4444]" />,
-          iconBg: "bg-[#FEE2E2]",
-        },
-      ]
-    : [];
+const statCards = [
+    {
+      label: "Total Tasks",
+      value: stats?.totalTasks ?? 0,
+      change: stats?.totalTasksChange ?? "0",
+      changeLabel: "from last week",
+      trend: "up" as const,
+      icon: <ListTodo size={18} className="text-[#6C5CE7]" />,
+      iconBg: "bg-[#F0EDFF]",
+    },
+    {
+      label: "Team",
+      value: teamsCount,
+      change: "",
+      changeLabel: "",
+      trend: "up" as const,
+      icon: <Users size={18} className="text-[#6366F1]" />,
+      iconBg: "bg-[#EEF2FF]",
+    },
+    {
+      label: "Projects",
+      value: projectsCount,
+      change: "",
+      changeLabel: "",
+      trend: "up" as const,
+      icon: <FolderKanban size={18} className="text-[#0EA5E9]" />,
+      iconBg: "bg-[#E0F2FE]",
+    },
+    {
+      label: "Overdue",
+      value: stats?.overdue ?? 0,
+      change: stats?.overdueChange ?? "0",
+      changeLabel: "",
+      trend: "down" as const,
+      icon: <AlertTriangle size={18} className="text-[#EF4444]" />,
+      iconBg: "bg-[#FEE2E2]",
+    },
+  ];
 
   return (
     <>
-      <header className="h-16 bg-white border-b border-[#E8E8EF] flex items-center justify-end px-6 gap-3 shrink-0">
+      <header className="h-16 bg-white dark:bg-slate-900 border-b border-[#E8E8EF] dark:border-slate-800 flex items-center justify-end px-4 sm:px-6 lg:px-8 gap-3 shrink-0">
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#6C5CE7] text-white text-sm font-semibold hover:bg-[#5B4BD5] transition-colors"
@@ -259,26 +263,40 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <main className="flex-1 overflow-auto p-6 bg-[#F8F9FC]">
-        <div className="max-w-5xl mx-auto space-y-6">
+      <main className="flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8 bg-[#F8F9FC] dark:bg-slate-950">
+        <div className="mx-auto max-w-7xl space-y-6">
           {/* Greeting */}
-          <div className="bg-white rounded-xl border border-[#E8E8EF] px-6 py-5 flex items-center justify-between shadow-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#E8E8EF] dark:border-slate-800 px-6 py-5 shadow-sm">
             <div>
-              <h1 className="text-[22px] font-bold text-[#1E293B] leading-tight">
+              <h1 className="text-[22px] font-bold text-slate-950 dark:text-white leading-tight">
                 Good morning,{" "}
                 {mounted ? (user?.name?.split(" ")[0] ?? "there") : "there"} 👋
               </h1>
-              <p className="text-sm text-[#94A3B8] mt-0.5">{today}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{today}</p>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {statsLoading
-              ? Array(4)
-                  .fill(0)
-                  .map((_, i) => <Skeleton key={i} className="h-[140px]" />)
-              : statCards.map((s) => <StatCard key={s.label} {...s} />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {statsLoading ? (
+              Array(4)
+                .fill(0)
+                .map((_, i) => <Skeleton key={i} className="h-[140px]" />)
+            ) : statsError ? (
+              <div className="col-span-full bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                <p className="text-red-600 dark:text-red-400 text-sm">
+                  Failed to load dashboard stats. Please try refreshing the page.
+                </p>
+                <details className="mt-2">
+                  <summary className="text-xs text-red-500 cursor-pointer">Error details</summary>
+                  <pre className="text-xs text-red-400 mt-1 overflow-auto">
+                    {JSON.stringify(statsError, null, 2)}
+                  </pre>
+                </details>
+              </div>
+            ) : (
+              statCards.map((s) => <StatCard key={s.label} {...s} />)
+            )}
           </div>
 
           <TextCard
@@ -295,7 +313,7 @@ export default function DashboardPage() {
               action={
                 <Link
                   href="/dashboard/projects"
-                  className="flex items-center gap-1 text-sm text-[#6C5CE7] font-semibold hover:underline"
+                  className="flex items-center gap-1 text-sm text-[#6C5CE7] dark:text-sky-300 font-semibold hover:underline"
                 >
                   View all <ChevronRight size={14} />
                 </Link>
@@ -310,7 +328,7 @@ export default function DashboardPage() {
                     ))}
                 </div>
               ) : (projects ?? []).length === 0 ? (
-                <p className="text-sm text-[#94A3B8] py-4 text-center">
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
                   No projects yet.
                 </p>
               ) : (
@@ -318,22 +336,25 @@ export default function DashboardPage() {
                   {(projects ?? [])
                     .slice(0, 4)
                     .map(({ id, name, color, progress }) => (
-                      <div key={id} className="space-y-2">
-                        <div className="flex items-center justify-between">
+                      <div
+                        key={id}
+                        className="space-y-2 border border-[#E8E8EF] dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900"
+                      >
+                        <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2">
                             <span
                               className="w-2.5 h-2.5 rounded-sm shrink-0"
                               style={{ backgroundColor: color }}
                             />
-                            <span className="text-sm font-medium text-[#1E293B]">
+                            <span className="text-sm font-medium text-slate-950 dark:text-white">
                               {name}
                             </span>
                           </div>
-                          <span className="text-sm font-semibold text-[#64748B]">
+                          <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                             {progress}%
                           </span>
                         </div>
-                        <div className="h-2 rounded-full bg-[#E8E8EF] overflow-hidden">
+                        <div className="h-2 rounded-full bg-[#E8E8EF] dark:bg-slate-800 overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
@@ -354,7 +375,7 @@ export default function DashboardPage() {
               action={
                 <Link
                   href="/dashboard/tasks"
-                  className="flex items-center gap-1 text-sm text-[#6C5CE7] font-semibold hover:underline"
+                  className="flex items-center gap-1 text-sm text-[#6C5CE7] dark:text-sky-300 font-semibold hover:underline"
                 >
                   View all <ChevronRight size={14} />
                 </Link>
@@ -369,7 +390,7 @@ export default function DashboardPage() {
                     ))}
                 </div>
               ) : (myTasks ?? []).length === 0 ? (
-                <p className="text-sm text-[#94A3B8] py-4 text-center">
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
                   No tasks in progress.
                 </p>
               ) : (
@@ -377,13 +398,13 @@ export default function DashboardPage() {
                   {(myTasks ?? []).slice(0, 2).map((task) => (
                     <div
                       key={task.id}
-                      className="border border-[#E8E8EF] rounded-xl p-4 space-y-3 hover:border-[#D1D5DB] transition-colors bg-[#F8F9FC]"
+                      className="border border-[#E8E8EF] dark:border-slate-800 rounded-xl p-4 space-y-3 hover:border-[#D1D5DB] dark:hover:border-slate-700 transition-colors bg-[#F8F9FC] dark:bg-slate-950"
                     >
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-[#1E293B]">
+                      <div className="flex items-center justify-between gap-3">
+                        <h4 className="text-sm font-semibold text-slate-950 dark:text-white">
                           {task.title}
                         </h4>
-                        <button className="text-[#94A3B8] hover:text-[#64748B]">
+                        <button className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                           <MoreHorizontal size={15} />
                         </button>
                       </div>
@@ -394,7 +415,7 @@ export default function DashboardPage() {
                           {task.priority.toLowerCase()}
                         </span>
                         {task.dueDate && (
-                          <span className="flex items-center gap-1 text-xs text-[#94A3B8] ml-auto">
+                          <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 ml-auto">
                             <Calendar size={11} />{" "}
                             {new Date(task.dueDate).toLocaleDateString(
                               "en-US",
@@ -435,11 +456,11 @@ export default function DashboardPage() {
                   ))}
               </div>
             ) : (activity ?? []).length === 0 ? (
-              <p className="text-sm text-[#94A3B8] py-4 text-center">
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
                 No recent activity.
               </p>
             ) : (
-              <div className="divide-y divide-[#F1F5F9]">
+              <div className="divide-y divide-[#F1F5F9] dark:divide-slate-800">
                 {(activity ?? []).map((item) => {
                   const mins = mounted
                     ? Math.round(
@@ -467,14 +488,14 @@ export default function DashboardPage() {
                         {item.user.initials}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#1E293B]">
+                        <p className="text-sm text-slate-950 dark:text-white">
                           <span className="font-semibold">
                             {item.user.name}
                           </span>{" "}
-                          <span className="text-[#64748B]">{item.action}</span>{" "}
+                          <span className="text-slate-500 dark:text-slate-400">{item.action}</span>{" "}
                           <span className="font-semibold">{item.target}</span>
                         </p>
-                        <p className="text-xs text-[#94A3B8] mt-0.5">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                           {timeStr}
                         </p>
                       </div>

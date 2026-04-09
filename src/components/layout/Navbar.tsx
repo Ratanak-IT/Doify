@@ -55,32 +55,36 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50">
       <nav
-        className={`lp-nav${scrolled ? " lp-nav--scrolled" : ""} dark:bg-slate-900 dark:border-b dark:border-slate-800`}
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+          scrolled
+            ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/20 dark:border-slate-700/50 shadow-lg"
+            : "bg-transparent"
+        }`}
       >
-        <div className="lp-nav-inner">
-          <Link href="/" className="lp-logo-wrap">
-            <div className="lp-logo-mark">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-5">
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                 <rect x="2" y="2" width="5" height="12" rx="1.5" fill="white" />
                 <rect x="9" y="2" width="5" height="8" rx="1.5" fill="white" opacity=".8" />
               </svg>
             </div>
-            <span className="lp-logo-text dark:text-white">TaskFlow</span>
+            <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">TaskFlow</span>
           </Link>
 
-          <div className="lp-nav-links">
+          <div className="hidden md:flex items-center gap-7 flex-1 justify-center">
             {["Features", "Templates", "Pricing", "Enterprise"].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="lp-nav-link dark:text-gray-300 dark:hover:text-white"
+                className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
               >
                 {item}
               </a>
             ))}
           </div>
 
-          <div className="lp-nav-actions flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -146,10 +150,10 @@ export default function Navbar() {
                 {/* Notification Bell */}
                 <Link
                   href="/dashboard/notifications"
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors relative"
+                  className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 relative"
                   title="Notifications"
                 >
-                  <Bell size={18} className="text-gray-600 dark:text-gray-300" />
+                  <Bell size={18} className="text-slate-600 dark:text-slate-300" />
                   {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
                       {unreadCount > 9 ? "9+" : unreadCount}
@@ -161,7 +165,7 @@ export default function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="w-9 h-9 rounded-full hover:ring-2 hover:ring-blue-500 transition-all overflow-hidden flex items-center justify-center bg-blue-100 dark:bg-slate-700"
+                    className="w-9 h-9 rounded-full hover:ring-2 hover:ring-purple-500 transition-all duration-300 overflow-hidden flex items-center justify-center bg-purple-100 dark:bg-slate-700"
                   >
                     {avatar ? (
                       <img
@@ -170,7 +174,7 @@ export default function Navbar() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                      <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
                         {displayName.charAt(0).toUpperCase()}
                       </span>
                     )}
@@ -182,12 +186,12 @@ export default function Navbar() {
                         className="fixed inset-0 z-10"
                         onClick={() => setProfileOpen(false)}
                       />
-                      <div className="absolute right-0 top-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-20 min-w-[200px] overflow-hidden">
-                        <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700">
-                          <p className="text-sm font-semibold dark:text-white">
+                      <div className="absolute right-0 top-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-20 min-w-[200px] overflow-hidden">
+                        <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
                             {displayName}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {user.email}
                           </p>
                         </div>
@@ -195,23 +199,23 @@ export default function Navbar() {
                         <Link
                           href="/dashboard/settings"
                           onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
                         >
                           <User size={14} /> Profile
                         </Link>
 
                         <Link
-                          href="/dashboard/settings"
+                          href="/dashboard"
                           onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
                         >
-                          <Settings size={14} /> Settings
+                          <Settings size={14} /> Dashboard
                         </Link>
 
                         <Link
                           href="/dashboard/notifications"
                           onClick={() => setProfileOpen(false)}
-                          className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                          className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
                         >
                           <span className="flex items-center gap-2.5">
                             <Bell size={14} /> Notifications
@@ -223,14 +227,14 @@ export default function Navbar() {
                           )}
                         </Link>
 
-                        <div className="border-t border-gray-200 dark:border-slate-700 mt-1" />
+                        <div className="border-t border-slate-200 dark:border-slate-700 my-1" />
 
                         <button
                           onClick={() => {
                             setProfileOpen(false);
                             router.push("/login");
                           }}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors"
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors duration-200"
                         >
                           <LogOut size={14} /> Sign out
                         </button>
@@ -241,12 +245,15 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login" className="lp-btn-ghost dark:text-gray-300 dark:hover:bg-slate-800">
-                  {t("nav.login")}
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
+                >
+                  Log in
                 </Link>
                 <Link
                   href="/register"
-                  className="lp-btn-primary lp-btn-sm"
+                  className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 shadow-purple-500/25"
                 >
                   {t("nav.getStarted")}
                 </Link>

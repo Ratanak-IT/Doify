@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, CheckCheck, RefreshCw, ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
 import {
   useGetNotificationsQuery,
@@ -21,6 +22,38 @@ const TYPE_STYLE: Record<string, { bg: string; dot: string }> = {
   TEAM_INVITATION:     { bg: "bg-indigo-50", dot: "bg-indigo-500" },
 };
 
+function getNotificationHref(notif: Notification) {
+  const referenceType = String(notif.referenceType ?? "").trim().toLowerCase();
+  const referenceId = notif.referenceId ? encodeURIComponent(notif.referenceId) : null;
+
+  if (referenceType === "team") {
+    return referenceId ? `/dashboard/team/${referenceId}` : "/dashboard/team";
+  }
+
+  if (referenceType === "project") {
+    return "/dashboard/projects";
+  }
+
+  if (referenceType === "task") {
+    return referenceId ? `/dashboard/tasks?taskId=${referenceId}` : "/dashboard/tasks";
+  }
+
+  if (referenceType === "comment") {
+    return "/dashboard/tasks";
+  }
+
+  if (notif.type === "TEAM_INVITATION") return "/dashboard/team";
+  if (notif.type === "PROJECT_UPDATED") return "/dashboard/projects";
+  if (notif.type === "TASK_ASSIGNED" || notif.type === "DUE_DATE_REMINDER" || notif.type === "OVERDUE_TASK") {
+    return referenceId ? `/dashboard/tasks?taskId=${referenceId}` : "/dashboard/tasks";
+  }
+  if (notif.type === "MENTIONED_IN_COMMENT" || notif.type === "COMMENT_ADDED") {
+    return referenceId ? `/dashboard/team?taskId=${referenceId}` : "/dashboard/team";
+  }
+
+  return "/dashboard/notifications";
+}
+
 function Skeleton() {
   return (
     <div className="animate-pulse flex gap-3 p-4">
@@ -35,11 +68,11 @@ function Skeleton() {
 
 function NotifCard({
   notif,
-  onRead,
+  onClick,
   onAcceptInvite,
 }: {
   notif: Notification;
-  onRead: (id: string) => void;
+  onClick: () => void;
   onAcceptInvite: (invitationId: string, notifId: string) => void;
 }) {
   const style = TYPE_STYLE[notif.type] ?? { bg: "bg-slate-50", dot: "bg-slate-400" };
@@ -57,49 +90,53 @@ function NotifCard({
 
   return (
     <div
-      className={`flex gap-3 p-4 rounded-xl border transition-all ${
-        // FIX: API field is `isRead`, not `read`
-        notif.isRead ? "bg-white border-[#f3f4f6]" : `${style.bg} border-transparent`
-      } ${!isInvite ? "cursor-pointer hover:shadow-sm" : ""}`}
-      onClick={() => {
-        if (!isInvite && !notif.isRead) onRead(notif.id);
-      }}
+      className={`group rounded-3xl border p-5 transition-all ${
+        notif.isRead ? "border-slate-200 bg-white shadow-sm" : "border-transparent bg-slate-50 shadow-md"
+      } hover:-translate-y-0.5 hover:shadow-lg cursor-pointer`}
+      onClick={onClick}
     >
-      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${notif.isRead ? "bg-[#e5e7eb]" : style.dot}`} />
-      <div className="flex-1 min-w-0">
-        {/* FIX: API has only `message` — no separate `title` field */}
-        <p className={`text-sm leading-snug ${notif.isRead ? "text-[#6a7282]" : "text-[#0a0a0a] font-medium"}`}>
-          {notif.message}
-        </p>
-        <p className="text-[10px] text-[#9ca3af] mt-1">{timeAgo(notif.createdAt)}</p>
+      <div className="flex items-start gap-3">
+        <div className={`w-3 h-3 rounded-full mt-1.5 ${notif.isRead ? "bg-slate-300" : style.dot}`} />
+        <div className="flex-1 min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              {notif.type.replace(/_/g, " ")}
+            </span>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${style.bg} ${style.dot === "bg-slate-400" ? "text-slate-700" : "text-slate-800"}`}>
+              {notif.referenceType ? notif.referenceType : notif.type.toLowerCase()}
+            </span>
+          </div>
+          <p className={`text-sm leading-6 ${notif.isRead ? "text-slate-500" : "text-slate-950 font-semibold"}`}>
+            {notif.message}
+          </p>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <span>{timeAgo(notif.createdAt)}</span>
+            {notif.referenceId && <span className="px-2 py-1 rounded-full bg-slate-100 text-slate-500">ID: {notif.referenceId}</span>}
+          </div>
 
-        {/* Accept button for TEAM_INVITATION — referenceId is the invitation id */}
-        {isInvite && notif.referenceId && !notif.isRead && (
-          <button
-            disabled={accepting}
-            onClick={async (e) => {
-              e.stopPropagation();
-              setAccepting(true);
-              await onAcceptInvite(notif.referenceId!, notif.id);
-              setAccepting(false);
-            }}
-            className="mt-2 flex items-center gap-1.5 h-7 px-3 rounded-lg bg-[#615fff] text-white text-xs font-semibold hover:bg-[#4f46e5] disabled:opacity-60 transition-colors"
-          >
-            <UserPlus size={11} />
-            {accepting ? "Accepting…" : "Accept Invitation"}
-          </button>
-        )}
-      </div>
-      {!notif.isRead && !isInvite && (
-        <div className="shrink-0">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#615fff] mt-1.5" />
+          {isInvite && notif.referenceId && !notif.isRead && (
+            <button
+              disabled={accepting}
+              onClick={async (e) => {
+                e.stopPropagation();
+                setAccepting(true);
+                await onAcceptInvite(notif.referenceId!, notif.id);
+                setAccepting(false);
+              }}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#615fff] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#4f46e5] disabled:opacity-60 transition-colors"
+            >
+              <UserPlus size={13} />
+              {accepting ? "Accepting…" : "Accept Invitation"}
+            </button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
 export default function NotificationsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const { data: pageData, isLoading, isError, refetch } = useGetNotificationsQuery({ page, size: 20 });
   const notifications: Notification[] = pageData?.content ?? [];
@@ -115,61 +152,85 @@ export default function NotificationsPage() {
 
   const handleAcceptInvite = async (invitationId: string, notifId: string) => {
     await acceptInvitation(invitationId);
-    // Also mark the notification as read after accepting
     await markRead(notifId);
+  };
+
+  const handleCardClick = async (notif: Notification) => {
+    if (!notif.isRead) {
+      try {
+        await markRead(notif.id);
+      } catch {
+        // swallow errors and continue navigation
+      }
+    }
+    router.push(getNotificationHref(notif));
   };
 
   return (
     <>
-      <header className="h-16 bg-white border-b border-[#e5e7eb] flex items-center justify-between px-6 shrink-0">
-        <div className="flex items-center gap-3">
-          <Bell size={18} className="text-[#374151]" />
-          <h1 className="text-lg font-semibold text-[#0a0a0a]">Notifications</h1>
-          {unreadCount > 0 && (
-            <span className="bg-[#fb2c36] text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-              {unreadCount}
-            </span>
-          )}
+      <header className="h-20 bg-white border-b border-slate-200 dark:bg-slate-950 dark:border-slate-800 flex items-center justify-between px-6 shrink-0">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
+            Notification center
+          </p>
+          <div className="mt-2 flex items-center gap-3">
+            <Bell size={20} className="text-slate-700 dark:text-slate-200" />
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Notifications</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Stay on top of your tasks, teams, and comments.
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => refetch()}
-            className="w-9 h-9 rounded-lg border border-[#e5e7eb] flex items-center justify-center text-[#6a7282] hover:bg-[#f9fafb] transition-colors"
+            className="inline-flex h-10 items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-colors dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
             title="Refresh"
           >
-            <RefreshCw size={14} />
+            <RefreshCw size={16} />
           </button>
           {unreadCount > 0 && (
             <button
               onClick={() => markAllRead()}
-              className="flex items-center gap-2 h-9 px-3 rounded-lg border border-[#e5e7eb] text-sm font-medium text-[#374151] hover:bg-[#f9fafb] transition-colors"
+              className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
             >
-              <CheckCheck size={14} /> Mark all read
+              <CheckCheck size={16} /> Mark all read
             </button>
           )}
         </div>
       </header>
 
       <main className="flex-1 overflow-auto p-6">
-        <div className="max-w-2xl mx-auto space-y-4">
-          {/* Filter tabs */}
-          <div className="flex gap-1 bg-[#f3f4f6] p-1 rounded-xl w-fit">
-            {(["all", "unread"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 h-7 rounded-lg text-sm font-medium transition-all capitalize ${
-                  filter === f ? "bg-white text-[#0a0a0a] shadow-sm" : "text-[#6a7282] hover:text-[#374151]"
-                }`}
-              >
-                {f}
-                {f === "unread" && unreadCount > 0 && (
-                  <span className="ml-1.5 bg-[#615fff] text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            ))}
+        <div className="max-w-5xl mx-auto space-y-6">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Filtered view</p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{filter === "all" ? "All notifications" : "Unread notifications"}</h2>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {(["all", "unread"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                      filter === f
+                        ? "bg-slate-950 text-white shadow-sm dark:bg-slate-200 dark:text-slate-950"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    {f === "all" ? "All" : "Unread"}
+                    {f === "unread" && unreadCount > 0 && (
+                      <span className="ml-2 inline-flex h-6 items-center justify-center rounded-full bg-[#615fff] px-2 text-[11px] font-semibold text-white">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {isError && (
@@ -195,7 +256,7 @@ export default function NotificationsPage() {
                     <NotifCard
                       key={n.id}
                       notif={n}
-                      onRead={(id) => markRead(id)}
+                      onClick={() => handleCardClick(n)}
                       onAcceptInvite={handleAcceptInvite}
                     />
                   ))

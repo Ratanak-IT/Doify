@@ -37,7 +37,7 @@ export const taskApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["PersonalTask", "Task"],
+      invalidatesTags: ["PersonalTask", "Task", "Stats"],
     }),
 
     getProjectTasks: builder.query<
@@ -89,6 +89,7 @@ export const taskApi = baseApi.injectEndpoints({
         { type: "ProjectTask", id: projectId },
         "ProjectTask",
         "Task",
+        "Stats",
       ],
     }),
 
@@ -122,6 +123,7 @@ export const taskApi = baseApi.injectEndpoints({
         { type: "Task", id },
         "PersonalTask",
         "Task", // re-fetches all getSubtasksQuery caches (they providesTags: "Task")
+        "Stats",
       ],
     }),
 
@@ -151,12 +153,13 @@ export const taskApi = baseApi.injectEndpoints({
         { type: "ProjectTask", id: projectId },
         "ProjectTask",
         "Task", // re-fetches all getSubtasksQuery caches
+        "Stats",
       ],
     }),
 
     deleteTask: builder.mutation<void, string>({
       query: (id) => ({ url: `/tasks/${id}`, method: "DELETE" }),
-      invalidatesTags: ["Task", "PersonalTask", "ProjectTask"],
+      invalidatesTags: ["Task", "PersonalTask", "ProjectTask", "Stats"],
     }),
 
     getSubtasks: builder.query<Task[], string>({
@@ -321,6 +324,45 @@ export const taskApi = baseApi.injectEndpoints({
 
     getDashboardStats: builder.query<DashboardStats, void>({
       query: () => "/dashboard",
+      transformResponse: (response: any) => {
+        // If response has stats directly, return it
+        if (response.totalTasks !== undefined) {
+          return {
+            totalTasks: response.totalTasks,
+            inProgress: response.inProgress,
+            completed: response.completed,
+            overdue: response.overdue,
+            totalTasksChange: response.totalTasksChange || "0",
+            inProgressChange: response.inProgressChange || "0",
+            completedChange: response.completedChange || "0",
+            overdueChange: response.overdueChange || "0",
+          };
+        }
+        // If response has data wrapper
+        if (response.data && response.data.totalTasks !== undefined) {
+          return {
+            totalTasks: response.data.totalTasks,
+            inProgress: response.data.inProgress,
+            completed: response.data.completed,
+            overdue: response.data.overdue,
+            totalTasksChange: response.data.totalTasksChange || "0",
+            inProgressChange: response.data.inProgressChange || "0",
+            completedChange: response.data.completedChange || "0",
+            overdueChange: response.data.overdueChange || "0",
+          };
+        }
+        // Default fallback
+        return {
+          totalTasks: 0,
+          inProgress: 0,
+          completed: 0,
+          overdue: 0,
+          totalTasksChange: "0",
+          inProgressChange: "0",
+          completedChange: "0",
+          overdueChange: "0",
+        };
+      },
       providesTags: ["Stats"],
     }),
 
