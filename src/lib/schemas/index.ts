@@ -2,74 +2,99 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
-  password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
-});
-
-export const registerSchema = z.object({
-  fullName: z.string().min(1, "Full name is required").min(2, "Name must be at least 2 characters").max(100),
-  username: z
-    .string()
-    .min(1, "Username is required")
-    .min(3, "Username must be at least 3 characters")
-    .max(30)
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z
     .string()
     .min(1, "Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
-  confirmPassword: z.string().min(1, "Please confirm your password"),
-}).refine((d) => d.password === d.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
+    .min(6, "Password must be at least 6 characters"),
 });
+
+export const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .min(1, "Full name is required")
+      .min(2, "Name must be at least 2 characters")
+      .max(100),
+    username: z
+      .string()
+      .min(1, "Username is required")
+      .min(3, "Username must be at least 3 characters")
+      .max(30)
+      .regex(
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores",
+      ),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Invalid email address"),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const forgotPasswordSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
 });
 
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Token is required"),
-  newPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Must contain at least one number"),
-  confirmPassword: z.string().min(1, "Please confirm your password"),
-}).refine((d) => d.newPassword === d.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Token is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 // ── Profile ────────────────────────────────────────────────────────────────
 export const updateProfileSchema = z.object({
-  fullName: z.string().min(1, "Full name is required").min(2).max(100),
+  fullName: z.string().min(3, "Full name is required").min(2).max(100),
   username: z
     .string()
     .min(3, "Username must be at least 3 characters")
     .max(30)
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores",
+    ),
   email: z.string().email("Invalid email address"),
+  gender: z.string()
 });
-
-export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z
-    .string()
-    .min(8, "New password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Must contain at least one number"),
-  confirmPassword: z.string().min(1, "Please confirm your new password"),
-}).refine((d) => d.newPassword === d.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters")
+      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 // ── Task ───────────────────────────────────────────────────────────────────
 export const createPersonalTaskSchema = z.object({
-  title: z.string().min(1, "Task title is required").max(200, "Title is too long"),
+  title: z
+    .string()
+    .min(1, "Task title is required")
+    .max(200, "Title is too long"),
   description: z.string().max(2000).optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
   dueDate: z.string().optional(),
@@ -77,7 +102,10 @@ export const createPersonalTaskSchema = z.object({
 });
 
 export const createProjectTaskSchema = z.object({
-  title: z.string().min(1, "Task title is required").max(200, "Title is too long"),
+  title: z
+    .string()
+    .min(1, "Task title is required")
+    .max(200, "Title is too long"),
   description: z.string().max(2000).optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
   dueDate: z.string().optional(),
@@ -96,20 +124,32 @@ export const updateTaskSchema = z.object({
 
 // ── Comment ────────────────────────────────────────────────────────────────
 export const createCommentSchema = z.object({
-  content: z.string().min(1, "Comment cannot be empty").max(1000, "Comment is too long"),
+  content: z
+    .string()
+    .min(1, "Comment cannot be empty")
+    .max(1000, "Comment is too long"),
 });
 
 export const updateCommentSchema = z.object({
-  content: z.string().min(1, "Comment cannot be empty").max(1000, "Comment is too long"),
+  content: z
+    .string()
+    .min(1, "Comment cannot be empty")
+    .max(1000, "Comment is too long"),
 });
 
 // ── Project ────────────────────────────────────────────────────────────────
 export const createProjectSchema = z.object({
-  name: z.string().min(1, "Project name is required").max(100, "Name is too long"),
+  name: z
+    .string()
+    .min(1, "Project name is required")
+    .max(100, "Name is too long"),
   description: z.string().max(500).optional(),
   startDate: z.string().optional(),
   dueDate: z.string().optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid color").default("#4F46E5"),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid color")
+    .default("#4F46E5"),
   teamId: z.string().optional(),
 });
 
@@ -117,7 +157,10 @@ export const updateProjectSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
   dueDate: z.string().optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 // ── Team ───────────────────────────────────────────────────────────────────

@@ -97,7 +97,6 @@ export const taskApi = baseApi.injectEndpoints({
       providesTags: (_r, _e, id) => [{ type: "Task", id }],
     }),
 
-    // ─── Used for personal tasks only ───────────────────────────────────────
     updateTask: builder.mutation<
       Task,
       {
