@@ -77,7 +77,7 @@ function NotifCard({
   onClick: () => void;
   onAcceptInvite: (invitationId: string, notifId: string) => void;
 }) {
-  const style = TYPE_STYLE[notif.type] ?? { bg: "bg-slate-50 dark:bg-slate-900", dot: "bg-slate-400" };
+  const style = TYPE_STYLE[notif.type] ?? { bg: "bg-slate-50 dark:bg-[#1a1c2e]", dot: "bg-slate-400" };
   const [accepting, setAccepting] = useState(false);
 
   const timeAgo = (iso: string) => {
@@ -94,8 +94,8 @@ function NotifCard({
     <div
       className={`group rounded-3xl border p-5 transition-all ${
         notif.isRead 
-          ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm" 
-          : "border-transparent bg-slate-50 dark:bg-slate-900 shadow-md"
+          ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a1c2e] shadow-sm" 
+          : "border-transparent bg-slate-50 dark:bg-[#1a1c2e] shadow-md"
       } hover:-translate-y-0.5 hover:shadow-lg cursor-pointer`}
       onClick={onClick}
     >
@@ -173,9 +173,9 @@ export default function NotificationsPage() {
     <>
       <DashboardHeader onRefresh={refetch} showCreate={false} />
 
-      <main className="flex-1 overflow-auto p-4 sm:p-6">
+      <main className="flex-1 overflow-auto p-4 sm:p-6 bg-[#F8F9FC] dark:bg-[#1E1B2E]">
         <div className="max-w-5xl mx-auto space-y-6">
-          <div className="rounded-[32px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a1c2e] p-6 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Filtered view</p>
