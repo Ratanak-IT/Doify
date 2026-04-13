@@ -72,6 +72,7 @@ const ARROW_LABEL: Record<TaskStatus, string> = {
   DONE:        "→ DONE",
 };
 
+// ─── Status Badge ─────────────────────────────────────────────────────────────
 
 function StatusBadge({
   status,
@@ -96,6 +97,7 @@ function StatusBadge({
   );
 }
 
+// ─── Inline Edit Form ─────────────────────────────────────────────────────────
 
 function InlineEditForm({
   title,
@@ -153,6 +155,7 @@ function InlineEditForm({
   );
 }
 
+// ─── Subtask Row ──────────────────────────────────────────────────────────────
 
 function SubtaskRow({
   subtask,
@@ -384,6 +387,7 @@ function TeamTaskCard({
   task,
   col,
   projectId,
+  teamId,
   onMove,
   onOpenTask,
   onDelete,
@@ -393,6 +397,7 @@ function TeamTaskCard({
   task: Task;
   col: ColDef;
   projectId: string;
+  teamId: string;
   onMove: (taskId: string, status: TaskStatus) => void;
   onDelete: (id: string) => void;
   onComment: (task: Task) => void;
@@ -541,7 +546,7 @@ function TeamTaskCard({
         <EditProjectTaskModal
           task={task}
           projectId={projectId}
-          teamId={project?.teamId ?? ""}
+          teamId={teamId}
           onClose={() => setShowEdit(false)}
         />
       )}
@@ -723,6 +728,7 @@ export default function ProjectTasksPanel({ project }: { project: Project }) {
                             task={task}
                             col={col}
                             projectId={project.id}
+                            teamId={project.teamId ?? ""}
                             onMove={handleMove}
                             onDelete={handleDelete}
                             onComment={setCommentTask}
@@ -759,7 +765,6 @@ export default function ProjectTasksPanel({ project }: { project: Project }) {
       {showCreate && (
         <CreateProjectTaskModal
           projectId={project.id}
-          teamId={project.teamId ?? ""}
           defaultStatus={defaultStatus}
           onClose={() => setShowCreate(false)}
         />
