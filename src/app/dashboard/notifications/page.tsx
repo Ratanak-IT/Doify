@@ -45,7 +45,7 @@ function getNotificationHref(notif: Notification): string {
       return "/dashboard/team";
 
     case "INVITATION_ACCEPTED":
-      return refId ? `/dashboard/team/${refId}` : "/dashboard/team";
+      return refId ? `/dashboard/team?teamId=${refId}` : "/dashboard/team";
 
     default:
       if (refType === "TASK")    return refId ? `/dashboard/tasks?taskId=${refId}` : "/dashboard/tasks";

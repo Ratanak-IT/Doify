@@ -161,7 +161,12 @@ export default function SettingsPage() {
       alert(err?.data?.message ?? "Failed to change password.");
     }
   };
-
+ 
+  const info=[
+                      { id: "fullName", label: "Full Name", type: "text", key: "fullName" },
+                      { id: "username", label: "Username", type: "text", key: "username" },
+                      { id: "email", label: "Email Address", type: "email", key: "email" },
+                    ];
   const genderOptions = [
     { value: "", label: "Not specified" },
     { value: "MALE", label: "Male" },
@@ -175,11 +180,18 @@ export default function SettingsPage() {
     { id: "password" as const, label: "Security", icon: Shield, desc: "Password & access" },
   ];
 
+  const changePass=[
+                        { key: "currentPassword", label: "Current Password" },
+                        { key: "newPassword", label: "New Password" },
+                        { key: "confirmPassword", label: "Confirm Password" },
+                      ];
+
   return (
     <>
       <DashboardHeader showCreate={false} />
 
-      <div className="flex-1 min-h-screen bg-slate-50 dark:bg-[#080814]">
+      {/* pb-20 on mobile to avoid content hiding behind bottom tab bar */}
+      <div className="flex-1 min-h-screen bg-slate-50 dark:bg-[#080814] pb-20 md:pb-0">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
           {/* Page heading */}
@@ -194,8 +206,8 @@ export default function SettingsPage() {
 
           <div className="flex flex-col md:flex-row gap-8">
 
-            {/* Sidebar Navigation */}
-            <aside className="w-full md:w-60 shrink-0">
+            {/* Sidebar Navigation — desktop only */}
+            <aside className="hidden md:block w-60 shrink-0">
               <nav className="space-y-1">
                 {navItems.map(({ id, label, icon: Icon, desc }) => (
                   <button
@@ -204,7 +216,7 @@ export default function SettingsPage() {
                       setActiveSection(id);
                       setErrors([]);
                     }}
-                    className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-all font-bold text-2xl
+                    className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-all
                       ${activeSection === id
                         ? "bg-gray-300 text-black"
                         : "hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-400"
@@ -215,7 +227,7 @@ export default function SettingsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-lg">{label}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-500 mt-0.5 ">{desc}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{desc}</div>
                     </div>
                     <ChevronRight size={16} className={`transition-transform ${activeSection === id ? "translate-x-1" : "opacity-40"}`} />
                   </button>
@@ -259,13 +271,9 @@ export default function SettingsPage() {
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-6">Personal Information</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {[
-                      { id: "fullName", label: "Full Name", type: "text", key: "fullName" },
-                      { id: "username", label: "Username", type: "text", key: "username" },
-                      { id: "email", label: "Email Address", type: "email", key: "email" },
-                    ].map(({ id, label, type, key }) => (
+                    {info.map(({ id, label, type, key }) => (
                       <div key={id}>
-                        <label htmlFor={id} className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 tracking-wide">
+                        <label htmlFor={id} className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
                           {label}
                         </label>
                         <input
@@ -273,7 +281,7 @@ export default function SettingsPage() {
                           type={type}
                           value={form[key as keyof typeof form]}
                           onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                          className="w-full px-4 py-3 rounded-[12px] border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
                         />
                       </div>
                     ))}
@@ -286,7 +294,7 @@ export default function SettingsPage() {
                         id="gender"
                         value={form.gender}
                         onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                        className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 rounded-[12px] border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
                       >
                         {genderOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -296,10 +304,10 @@ export default function SettingsPage() {
 
                     {profile?.createdAt && (
                       <div>
-                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 tracking-wide">
+                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
                           Member Since
                         </label>
-                        <div className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-500 text-sm">
+                        <div className="w-full px-4 py-3 rounded-[12px] border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-500 text-sm">
                           {new Date(profile.createdAt).toLocaleDateString("en-US", {
                             year: "numeric", month: "long", day: "numeric",
                           })}
@@ -315,13 +323,13 @@ export default function SettingsPage() {
                       ))}
                     </div>
                   )}
-
+                  <div className="flex justify-end">
                   <button
                     onClick={handleSave}
                     disabled={saving || profileLoading}
-                    className={`mt-8 w-full sm:w-auto px-8 py-3 text-sm font-semibold rounded-2xl flex items-center justify-center gap-2 transition-all
-                      ${saveSuccess 
-                        ? "bg-emerald-600 text-white" 
+                    className={`mt-5 px-3 py-3 text-sm font-bold rounded-[12px] flex items-center gap-2
+                      ${saveSuccess
+                        ? "bg-emerald-600 text-white"
                         : "bg-blue-600 hover:bg-blue-700 text-white"
                       } disabled:opacity-70`}
                   >
@@ -333,6 +341,7 @@ export default function SettingsPage() {
                       <><Check size={18} /> Save Changes</>
                     )}
                   </button>
+                  </div>
                 </div>
               )}
 
@@ -353,19 +362,15 @@ export default function SettingsPage() {
                   {!showPassword ? (
                     <button
                       onClick={() => setShowPassword(true)}
-                      className="flex items-center gap-2 px-6 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="flex items-center gap-2 px-6 py-3 border border-slate-300 dark:border-slate-700 rounded-[10px] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     >
                       <Lock size={18} /> Change Password
                     </button>
                   ) : (
                     <div className="max-w-md space-y-6">
-                      {[
-                        { key: "currentPassword", label: "Current Password" },
-                        { key: "newPassword", label: "New Password" },
-                        { key: "confirmPassword", label: "Confirm Password" },
-                      ].map(({ key, label }) => (
+                      {changePass.map(({ key, label }) => (
                         <div key={key}>
-                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 tracking-wide">
+                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
                             {label}
                           </label>
                           <div className="relative">
@@ -373,7 +378,7 @@ export default function SettingsPage() {
                               type={show[key as keyof typeof show] ? "text" : "password"}
                               value={pwdForm[key as keyof typeof pwdForm]}
                               onChange={(e) => setPwdForm({ ...pwdForm, [key]: e.target.value })}
-                              className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                              className="w-full px-4 py-3 rounded-[12px] border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-blue-500 transition-colors"
                             />
                             <button
                               type="button"
@@ -392,12 +397,12 @@ export default function SettingsPage() {
                         </div>
                       )}
 
-                      <div className="flex gap-3 pt-4">
+                      <div className="flex gap-3 pt-4 justify-end">
                         <button
                           onClick={handlePasswordSave}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-colors"
+                          className=" px-3 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-[12px] text-[14px] font-bold flex items-center justify-center gap-2"
                         >
-                          <Lock size={18} /> Update Password
+                          <Lock size={18} /> Update
                         </button>
                         <button
                           onClick={() => {
@@ -405,7 +410,7 @@ export default function SettingsPage() {
                             setErrors([]);
                             setPwdForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
                           }}
-                          className="px-6 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                          className="px-6 py-3 border border-slate-300 dark:border-slate-700 rounded-[12px] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                         >
                           Cancel
                         </button>
@@ -419,6 +424,29 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Tab Bar — hidden on md+ */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex safe-area-pb">
+        {navItems.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => {
+              setActiveSection(id);
+              setErrors([]);
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 text-xs font-medium transition-colors
+              ${activeSection === id
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-slate-400 dark:text-slate-500"
+              }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-colors ${activeSection === id ? "bg-blue-50 dark:bg-blue-950" : ""}`}>
+              <Icon size={20} />
+            </div>
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
     </>
   );
 }
