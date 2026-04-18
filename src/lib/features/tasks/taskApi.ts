@@ -2,8 +2,6 @@ import { baseApi } from "../api/api";
 import type {
   Task,
   Project,
-  ActivityItem,
-  DashboardStats,
   Comment,
   Attachment,
   PageResponse,
@@ -11,6 +9,7 @@ import type {
 
 export const taskApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
     getPersonalTasks: builder.query<
       PageResponse<Task>,
       { status?: string; search?: string; page?: number; size?: number }
@@ -30,6 +29,7 @@ export const taskApi = baseApi.injectEndpoints({
         priority?: string;
         dueDate?: string;
         parentTaskId?: string;
+        status?: string;
       }
     >({
       query: (body) => ({
@@ -37,7 +37,7 @@ export const taskApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["PersonalTask", "Task"],
+      invalidatesTags: ["PersonalTask", "Task", "Stats", "Dashboard", "Notification"],
     }),
 
     getProjectTasks: builder.query<
@@ -57,10 +57,7 @@ export const taskApi = baseApi.injectEndpoints({
       providesTags: (result, _error, { projectId }) =>
         result
           ? [
-              ...result.content.map((t) => ({
-                type: "Task" as const,
-                id: t.id,
-              })),
+              ...result.content.map((t) => ({ type: "Task" as const, id: t.id })),
               { type: "ProjectTask" as const, id: projectId },
               "ProjectTask",
             ]
@@ -89,6 +86,9 @@ export const taskApi = baseApi.injectEndpoints({
         { type: "ProjectTask", id: projectId },
         "ProjectTask",
         "Task",
+        "Stats",
+        "Dashboard",
+        "Notification",
       ],
     }),
 
@@ -97,7 +97,6 @@ export const taskApi = baseApi.injectEndpoints({
       providesTags: (_r, _e, id) => [{ type: "Task", id }],
     }),
 
-    // ─── Used for personal tasks only ───────────────────────────────────────
     updateTask: builder.mutation<
       Task,
       {
@@ -117,16 +116,15 @@ export const taskApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      // Also invalidate the PARENT task's subtask list so getSubtasksQuery
-      // re-fetches immediately when a subtask status/title changes.
       invalidatesTags: (_r, _e, { id }) => [
         { type: "Task", id },
         "PersonalTask",
-        "Task", // re-fetches all getSubtasksQuery caches (they providesTags: "Task")
+        "Task",
+        "Stats",
+        "Dashboard",
       ],
     }),
 
-    // ─── Used for project tasks (parent + subtasks) ──────────────────────────
     updateProjectTask: builder.mutation<
       Task,
       {
@@ -151,29 +149,23 @@ export const taskApi = baseApi.injectEndpoints({
         { type: "Task", id: taskId },
         { type: "ProjectTask", id: projectId },
         "ProjectTask",
-        "Task", // re-fetches all getSubtasksQuery caches
+        "Task",
+        "Stats",
+        "Dashboard",
       ],
     }),
 
     deleteTask: builder.mutation<void, string>({
       query: (id) => ({ url: `/tasks/${id}`, method: "DELETE" }),
-      invalidatesTags: ["Task", "PersonalTask", "ProjectTask"],
+      invalidatesTags: ["Task", "PersonalTask", "ProjectTask", "Stats", "Dashboard"],
     }),
 
     getSubtasks: builder.query<Task[], string>({
       query: (taskId) => `/tasks/${taskId}/subtasks`,
-      // Tag with the PARENT task id so any mutation that invalidates
-      // { type: "Task", id: parentTaskId } will re-fetch this query.
-      providesTags: (_r, _e, taskId) => [
-        { type: "Task", id: taskId },
-        "Task",
-      ],
+      providesTags: (_r, _e, taskId) => [{ type: "Task", id: taskId }, "Task"],
     }),
 
-    addAttachment: builder.mutation<
-      Attachment,
-      { taskId: string; file: FormData }
-    >({
+    addAttachment: builder.mutation<Attachment, { taskId: string; file: FormData }>({
       query: ({ taskId, file }) => ({
         url: `/tasks/${taskId}/attachments`,
         method: "POST",
@@ -182,11 +174,7 @@ export const taskApi = baseApi.injectEndpoints({
       invalidatesTags: (_r, _e, { taskId }) => [{ type: "Task", id: taskId }],
     }),
 
-    // Fix: transformResponse on DELETE mutations must return void, not null
-    deleteAttachment: builder.mutation<
-      void,
-      { taskId: string; attachmentId: string }
-    >({
+    deleteAttachment: builder.mutation<void, { taskId: string; attachmentId: string }>({
       query: ({ taskId, attachmentId }) => ({
         url: `/tasks/${taskId}/attachments/${attachmentId}`,
         method: "DELETE",
@@ -211,13 +199,10 @@ export const taskApi = baseApi.injectEndpoints({
         method: "POST",
         body: { content },
       }),
-      invalidatesTags: ["Comment"],
+      invalidatesTags: ["Comment", "Notification"],
     }),
 
-    updateComment: builder.mutation<
-      Comment,
-      { taskId: string; commentId: string; content: string }
-    >({
+    updateComment: builder.mutation<Comment, { taskId: string; commentId: string; content: string }>({
       query: ({ taskId, commentId, content }) => ({
         url: `/tasks/${taskId}/comments/${commentId}`,
         method: "PUT",
@@ -226,11 +211,7 @@ export const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ["Comment"],
     }),
 
-    // Fix: removed transformResponse: () => null — return type is void
-    deleteComment: builder.mutation<
-      void,
-      { taskId: string; commentId: string }
-    >({
+    deleteComment: builder.mutation<void, { taskId: string; commentId: string }>({
       query: ({ taskId, commentId }) => ({
         url: `/tasks/${taskId}/comments/${commentId}`,
         method: "DELETE",
@@ -238,10 +219,7 @@ export const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ["Comment"],
     }),
 
-    getProjects: builder.query<
-      PageResponse<Project>,
-      { page?: number; size?: number }
-    >({
+    getProjects: builder.query<PageResponse<Project>, { page?: number; size?: number }>({
       query: (params) => ({
         url: "/projects",
         params: { page: 0, size: 20, ...params },
@@ -276,60 +254,24 @@ export const taskApi = baseApi.injectEndpoints({
         teamId?: string;
       }
     >({
-      query: (body) => ({
-        url: "/projects",
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["Project"],
+      query: (body) => ({ url: "/projects", method: "POST", body }),
+      invalidatesTags: ["Project", "Dashboard", "Notification"],
     }),
 
     updateProject: builder.mutation<
       Project,
-      {
-        id: string;
-        data: {
-          name?: string;
-          description?: string;
-          dueDate?: string;
-          color?: string;
-        };
-      }
+      { id: string; data: { name?: string; description?: string; dueDate?: string; color?: string } }
     >({
-      query: ({ id, data }) => ({
-        url: `/projects/${id}`,
-        method: "PUT",
-        body: data,
-      }),
-      invalidatesTags: ["Project"],
+      query: ({ id, data }) => ({ url: `/projects/${id}`, method: "PUT", body: data }),
+      invalidatesTags: ["Project", "Dashboard"],
     }),
 
     deleteProject: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `/projects/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Project"],
-    }),
-
-    getDashboard: builder.query<
-      DashboardStats & { recentActivity: ActivityItem[] },
-      void
-    >({
-      query: () => "/dashboard",
-      providesTags: ["Stats", "Activity"],
-    }),
-
-    getDashboardStats: builder.query<DashboardStats, void>({
-      query: () => "/dashboard",
-      providesTags: ["Stats"],
-    }),
-
-    getRecentActivity: builder.query<ActivityItem[], void>({
-      query: () => "/dashboard/activity",
-      providesTags: ["Activity"],
+      query: (id) => ({ url: `/projects/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Project", "Dashboard"],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
@@ -354,7 +296,4 @@ export const {
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
-  useGetDashboardQuery,
-  useGetDashboardStatsQuery,
-  useGetRecentActivityQuery,
 } = taskApi;

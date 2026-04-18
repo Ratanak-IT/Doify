@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 const FEATURES = [
   {
@@ -78,23 +81,25 @@ const FEATURES = [
 ];
 
 export default function Features() {
+  const { t } = useTranslation();
+
   return (
-    <section id="features" className="lp-section lp-section--white">
-      <div className="lp-container">
+    <section id="features" className="lp-section lp-section--white bg-white text-gray-900 dark:bg-[#0B1120] dark:text-white transition-colors duration-300">
+      <div className="lp-container px-4 sm:px-6">
         <div className="lp-section-header">
-          <span className="lp-eyebrow lp-eyebrow--blue">The system</span>
-          <h2 className="lp-section-title">Everything your team needs</h2>
-          <p className="lp-section-sub">One platform to plan, track, and ship — without the complexity tax.</p>
+          <span className="font-bold text-blue-600 text-[18px] dark:text-gray-300">The system</span>
+          <h2 className="lp-section-title dark:text-gray-200">{t("landing.features.title")}</h2>
+          <p className="lp-section-sub dark:text-gray-200">{t("landing.features.subtitle")}</p>
         </div>
 
-        <div className="lp-features-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {FEATURES.map((f, i) => (
-            <div key={i} className="lp-feature-card">
+            <div key={i} className="p-5 rounded-2xl dark:bg-gray-500">
               <div className="lp-feature-icon" style={{ background: f.bg, color: f.color }}>
                 {f.icon}
               </div>
-              <h3 className="lp-feature-title">{f.title}</h3>
-              <p className="lp-feature-desc">{f.desc}</p>
+              <h3 className="lp-feature-title dark:text-gray-100">{f.title}</h3>
+              <p className="lp-feature-desc dark:text-gray-100">{f.desc}</p>
             </div>
           ))}
         </div>

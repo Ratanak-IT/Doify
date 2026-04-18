@@ -18,8 +18,6 @@ export const baseApi = createApi({
     },
     responseHandler: async (response) => {
       const text = await response.text();
-      // FIX: return null (not undefined) for empty 204 No Content responses.
-      // RTK Query requires { data: <value> } — undefined is rejected, null is valid.
       if (!text) return null;
       try {
         const json = JSON.parse(text);
@@ -36,6 +34,7 @@ export const baseApi = createApi({
     "Notification",
     "Profile",
     "Comment", "Attachment",
+    "Dashboard",
   ],
   endpoints: () => ({}),
 });

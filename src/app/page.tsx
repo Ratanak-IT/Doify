@@ -6,10 +6,11 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import Testimonials from "@/components/landing/Testimonials";
 import Pricing from "@/components/landing/Pricing";
 import FinalCTA from "@/components/landing/FinalCTA";
+import NavBar from "@/components/NavBar";
 
 export default function HomePage() {
   return (
-    <div className="lp-root">
+    <div className="dark:bg-gray-900">
       <Hero />
       <Logos />
       <Features />
