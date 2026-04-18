@@ -6,7 +6,9 @@ async function proxy(req: NextRequest, path: string) {
   const url = `${BASE_URL}/api/v1/${path}`;
   const authHeader = req.headers.get("authorization");
 
-  const isFormData = req.headers.get("content-type")?.includes("multipart/form-data");
+  const isFormData = req.headers
+    .get("content-type")
+    ?.includes("multipart/form-data");
 
   const headers: Record<string, string> = {};
   if (authHeader) headers["Authorization"] = authHeader;
@@ -22,12 +24,7 @@ async function proxy(req: NextRequest, path: string) {
     }
   }
 
-  const res = await fetch(url, {
-    method: req.method,
-    headers,
-    body,
-  });
-
+  const res = await fetch(url, { method: req.method, headers, body });
   const responseText = await res.text();
 
   if (!res.ok) {
@@ -40,13 +37,10 @@ async function proxy(req: NextRequest, path: string) {
     return NextResponse.json(errorData, { status: res.status });
   }
 
-  if (!responseText) {
-    return new NextResponse(null, { status: res.status });
-  }
+  if (!responseText) return new NextResponse(null, { status: res.status });
 
   try {
-    const json = JSON.parse(responseText);
-    return NextResponse.json(json);
+    return NextResponse.json(JSON.parse(responseText));
   } catch {
     return new NextResponse(responseText, {
       status: res.status,
@@ -55,45 +49,31 @@ async function proxy(req: NextRequest, path: string) {
   }
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path } = await params;
-  const fullPath = path.join("/");
-  const { searchParams } = new URL(req.url);
-  const qs = searchParams.toString();
+type Context = { params: Promise<{ path?: string[] | undefined }> };
+
+export async function GET(req: NextRequest, context: Context) {
+  const { path } = await context.params;
+  const fullPath = (path ?? []).join("/");
+  const qs = new URL(req.url).searchParams.toString();
   return proxy(req, qs ? `${fullPath}?${qs}` : fullPath);
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path } = await params;
-  return proxy(req, path.join("/"));
+export async function POST(req: NextRequest, context: Context) {
+  const { path } = await context.params;
+  return proxy(req, (path ?? []).join("/"));
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path } = await params;
-  return proxy(req, path.join("/"));
+export async function PUT(req: NextRequest, context: Context) {
+  const { path } = await context.params;
+  return proxy(req, (path ?? []).join("/"));
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path } = await params;
-  return proxy(req, path.join("/"));
+export async function PATCH(req: NextRequest, context: Context) {
+  const { path } = await context.params;
+  return proxy(req, (path ?? []).join("/"));
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path } = await params;
-  return proxy(req, path.join("/"));
+export async function DELETE(req: NextRequest, context: Context) {
+  const { path } = await context.params;
+  return proxy(req, (path ?? []).join("/"));
 }
