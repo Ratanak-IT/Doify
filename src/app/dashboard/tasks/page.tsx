@@ -2,7 +2,7 @@
 
 import DashboardHeader from "@/components/DashboardHeader";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Plus, Search, Calendar, RefreshCw,
@@ -340,8 +340,8 @@ function EditTaskModal({ task, onClose }: { task: Task; onClose: () => void }) {
   );
 }
 
-/* ── Page ───────────────────────────────────────────────────────── */
-export default function TasksPage() {
+/* ── Inner board — uses useSearchParams ─────────────────────────── */
+function TasksBoard() {
   const searchParams = useSearchParams();
   const taskId = searchParams?.get("taskId");
 
@@ -389,9 +389,8 @@ export default function TasksPage() {
 
   const handleDragEnd = () => { dragTaskRef.current = null; setDragOverCol(null); };
 
-  /* ── colors ── */
-  const pageBg      = dark ? "#1E1B2E" : "#F1F5F9";   // ← fixed: was #0f172a
-  const searchBarBg = dark ? "#1a1c2e" : "#ffffff";    // ← fixed: was #1e293b
+  const pageBg      = dark ? "#1E1B2E" : "#F1F5F9";
+  const searchBarBg = dark ? "#1a1c2e" : "#ffffff";
   const searchBorder= dark ? "#2a2d45" : "#E8E8EF";
   const inputBg     = dark ? "#1e293b" : "#ffffff";
   const inputBorder = dark ? "#334155" : "#D1D5DB";
@@ -583,5 +582,18 @@ export default function TasksPage() {
       {showModal && <NewTaskModal defaultStatus={defaultStatus} onClose={() => setModal(false)} />}
       {editTask && <EditTaskModal task={editTask} onClose={() => setEditTask(null)} />}
     </>
+  );
+}
+
+/* ── Page — Suspense wraps TasksBoard so useSearchParams is safe ── */
+export default function TasksPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-1 flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 rounded-full border-4 border-[#6C5CE7] border-t-transparent" />
+      </div>
+    }>
+      <TasksBoard />
+    </Suspense>
   );
 }
