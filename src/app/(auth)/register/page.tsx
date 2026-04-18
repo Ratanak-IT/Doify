@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRegisterMutation } from "@/lib/features/auth/authApi";
@@ -9,7 +9,6 @@ import { useAppDispatch } from "@/lib/hooks";
 import { registerSchema } from "@/lib/schemas";
 import type { z } from "zod";
 import { Eye, EyeOff, CheckCircle2, ArrowRight, Zap, Users, BarChart3 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@/lib/contexts/ThemeContext";
 
 type Form = z.infer<typeof registerSchema>;
@@ -18,13 +17,12 @@ type Errors = Partial<Record<keyof Form | "gender" | "general", string>>;
 const OAUTH_ERRORS: Record<string, string> = {
   oauth_cancelled: "Sign-up was cancelled. Please try again.",
   token_exchange_failed: "Could not connect to the provider. Please try again.",
-  no_email:
-    "Your account has no public email. Please use email/password registration.",
+  no_email: "Your account has no public email. Please use email/password registration.",
   backend_rejected: "Account could not be authenticated. Please try again.",
   server_error: "An unexpected error occurred. Please try again.",
 };
 
-/* ── Social button icons ── */
+/* ── Icons ── */
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden>
@@ -61,13 +59,9 @@ function Spinner() {
   );
 }
 
-// Build the provider authorization URL — browser redirects directly to provider
 function getOAuthUrl(provider: "google" | "github" | "facebook"): string {
-  const appUrl =
-    process.env.NEXT_PUBLIC_BETTER_AUTH_URL ?? "http://localhost:3000";
-  const redirectUri = encodeURIComponent(
-    `${appUrl}/api/auth/callback/${provider}`,
-  );
+  const appUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL ?? "http://localhost:3000";
+  const redirectUri = encodeURIComponent(`${appUrl}/api/auth/callback/${provider}`);
 
   if (provider === "google") {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
@@ -77,13 +71,13 @@ function getOAuthUrl(provider: "google" | "github" | "facebook"): string {
     const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "";
     return `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent("read:user user:email")}`;
   }
-  // facebook
   const clientId = process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID ?? "";
   return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent("email,public_profile")}&response_type=code`;
 }
 
-export default function RegisterPage() {
-  const router   = useRouter();
+// ─── Inner component that uses useSearchParams ────────────────────────────────
+function RegisterForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [register, { isLoading }] = useRegisterMutation();
@@ -100,13 +94,10 @@ export default function RegisterPage() {
   const [showConfirm, setConfirm] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-  // Pick up ?error= set by the callback route on failure
   useEffect(() => {
     const err = searchParams.get("error");
     if (err)
-      setErrors({
-        general: OAUTH_ERRORS[err] ?? "Sign-up failed. Please try again.",
-      });
+      setErrors({ general: OAUTH_ERRORS[err] ?? "Sign-up failed. Please try again." });
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -168,6 +159,145 @@ export default function RegisterPage() {
   );
 
   return (
+    <div className="w-full max-w-[400px]">
+      <div className="mb-7">
+        <h2 className={`text-3xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>Create account</h2>
+        <p className={`mt-2 ${dark ? "text-slate-400" : "text-slate-500"}`}>Set up your team workspace in minutes</p>
+      </div>
+
+      {errors.general && (
+        <div className={`mb-5 p-3.5 rounded-xl border text-sm ${dark ? "bg-red-950/50 border-red-800/50 text-red-400" : "bg-red-50 border-red-200 text-red-600"}`}>
+          {errors.general}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="mb-3">
+            <Label>Full name</Label>
+            <input placeholder="John Smith" value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              className={fieldCls(!!errors.fullName)} />
+            {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
+          </div>
+          <div className="mb-3">
+            <Label>Username</Label>
+            <input placeholder="johnsmith" value={form.username}
+              onChange={(e) => setForm({ ...form, username: e.target.value })}
+              className={fieldCls(!!errors.username)} />
+            {errors.username && <p className="text-xs text-red-500 mt-1">{errors.username}</p>}
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <Label>Work email</Label>
+          <input type="email" placeholder="you@company.com" value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            className={fieldCls(!!errors.email)} />
+          {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+        </div>
+
+        <div className="mb-3">
+          <Label>Gender <span className={`font-normal text-xs ${dark ? "text-slate-500" : "text-slate-400"}`}>(optional)</span></Label>
+          <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className={fieldCls(false)}>
+            <option value="">Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-binary</option>
+            <option value="other">Other</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <Label>Password</Label>
+          <div className="relative">
+            <input type={showPwd ? "text" : "password"} placeholder="Min. 8 characters"
+              value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className={`${fieldCls(!!errors.password)} pr-12`} />
+            <button type="button" onClick={() => setShowPwd((s) => !s)}
+              className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${dark ? "text-slate-400 hover:text-white" : "text-slate-400 hover:text-slate-700"}`}>
+              {showPwd ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
+          </div>
+          {form.password && (
+            <div className="mt-2 space-y-1">
+              <div className="flex gap-1">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i < strength ? strengthColor : dark ? "bg-white/10" : "bg-slate-200"}`} />
+                ))}
+              </div>
+              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>Strength: <span className="font-semibold">{strengthLabel}</span></p>
+            </div>
+          )}
+          {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+        </div>
+
+        <div className="mb-3">
+          <Label>Confirm password</Label>
+          <div className="relative">
+            <input type={showConfirm ? "text" : "password"} placeholder="Re-enter your password"
+              value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+              className={`${fieldCls(!!errors.confirmPassword)} pr-12`} />
+            <button type="button" onClick={() => setConfirm((s) => !s)}
+              className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${dark ? "text-slate-400 hover:text-white" : "text-slate-400 hover:text-slate-700"}`}>
+              {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
+          </div>
+          {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
+        </div>
+
+        <div className="mb-1.5 flex items-start gap-2.5 pt-1">
+          <input type="checkbox" id="terms" required
+            className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-[#4f39f6] cursor-pointer shrink-0" />
+          <label htmlFor="terms" className={`text-sm cursor-pointer leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+            I agree to the{" "}
+            <Link href="#" className="text-[#4f39f6] hover:underline font-medium">Terms of Service</Link>{" "}
+            and{" "}
+            <Link href="#" className="text-[#4f39f6] hover:underline font-medium">Privacy Policy</Link>
+          </label>
+        </div>
+
+        <button type="submit" disabled={isBusy}
+          className="w-full h-12 rounded-xl bg-[#4f39f6] hover:bg-[#4530e0] text-white font-semibold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(79,57,246,0.4)]">
+          {isLoading
+            ? (<><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/><path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Creating account…</>)
+            : (<>Create free account <ArrowRight size={16} /></>)
+          }
+        </button>
+      </form>
+
+      <div className="flex items-center gap-3 my-5">
+        <div className={`flex-1 h-px ${dark ? "bg-slate-800" : "bg-slate-200"}`} />
+        <span className="text-xs font-medium text-slate-400">or sign up with</span>
+        <div className={`flex-1 h-px ${dark ? "bg-slate-800" : "bg-slate-200"}`} />
+      </div>
+
+      <div className="flex gap-3">
+        {(["google", "github", "facebook"] as const).map((provider) => (
+          <button key={provider} onClick={() => handleSocial(provider)} disabled={isBusy} className={socialBtnCls} aria-label={`Sign up with ${provider}`}>
+            {socialLoading === provider ? <Spinner /> : provider === "google" ? <GoogleIcon /> : provider === "github" ? <GithubIcon /> : <FacebookIcon />}
+            <span className="capitalize">{provider}</span>
+          </button>
+        ))}
+      </div>
+
+      <p className={`text-center text-sm mt-6 ${dark ? "text-slate-400" : "text-slate-500"}`}>
+        Already have an account?{" "}
+        <Link href="/login" className="text-[#4f39f6] font-semibold hover:underline">Sign in</Link>
+      </p>
+    </div>
+  );
+}
+
+// ─── Page shell — Suspense wraps RegisterForm so useSearchParams is safe ───────
+export default function RegisterPage() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const dark = mounted && theme === "dark";
+
+  return (
     <div className={`min-h-screen flex transition-colors ${dark ? "bg-slate-900" : "bg-white"}`}>
 
       {/* Left branding panel */}
@@ -215,13 +345,15 @@ export default function RegisterPage() {
               <div key={i} className={`w-8 h-8 rounded-full ${c} border-2 border-[#312c85]`} />
             ))}
           </div>
-          <p className="text-sm"><span className="text-white font-semibold">2,400+</span><span className="text-[#c6d2ff]"> teams started this month</span></p>
+          <p className="text-sm">
+            <span className="text-white font-semibold">2,400+</span>
+            <span className="text-[#c6d2ff]"> teams started this month</span>
+          </p>
         </div>
       </div>
 
       {/* Right form panel */}
       <div className={`flex-1 flex flex-col items-center justify-center px-6 py-10 transition-colors overflow-y-auto ${dark ? "bg-slate-900" : "bg-white"}`}>
-
         <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden group">
           <div className="w-10 h-10 rounded-[14px] bg-[#4f39f6] group-hover:bg-[#4530e0] flex items-center justify-center transition-colors">
             <CheckCircle2 size={20} className="text-white" />
@@ -229,131 +361,10 @@ export default function RegisterPage() {
           <span className={`text-xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>Doify</span>
         </Link>
 
-        <div className="w-full max-w-[400px]">
-          <div className="mb-7">
-            <h2 className={`text-3xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>Create account</h2>
-            <p className={`mt-2 ${dark ? "text-slate-400" : "text-slate-500"}`}>Set up your team workspace in minutes</p>
-          </div>
-
-          {errors.general && (
-            <div className={`mb-5 p-3.5 rounded-xl border text-sm ${dark ? "bg-red-950/50 border-red-800/50 text-red-400" : "bg-red-50 border-red-200 text-red-600"}`}>
-              {errors.general}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="mb-3">
-                <Label>Full name</Label>
-                <input placeholder="John Smith" value={form.fullName}
-                  onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                  className={fieldCls(!!errors.fullName)} />
-                {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
-              </div>
-              <div className="mb-3">
-                <Label>Username</Label>
-                <input placeholder="johnsmith" value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  className={fieldCls(!!errors.username)} />
-                {errors.username && <p className="text-xs text-red-500 mt-1">{errors.username}</p>}
-              </div>
-            </div>
-
-            <div className="mb-3">
-              <Label>Work email</Label>
-              <input type="email" placeholder="you@company.com" value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className={fieldCls(!!errors.email)} />
-              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-            </div>
-
-            <div className="mb-3">
-              <Label>Gender <span className={`font-normal text-xs ${dark ? "text-slate-500" : "text-slate-400"}`}>(optional)</span></Label>
-              <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className={fieldCls(false)}>
-                <option value="">Select your gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="non-binary">Non-binary</option>
-                <option value="other">Other</option>
-                <option value="prefer-not-to-say">Prefer not to say</option>
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <Label>Password</Label>
-              <div className="relative">
-                <input type={showPwd ? "text" : "password"} placeholder="Min. 8 characters"
-                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className={`${fieldCls(!!errors.password)} pr-12`} />
-                <button type="button" onClick={() => setShowPwd((s) => !s)}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${dark ? "text-slate-400 hover:text-white" : "text-slate-400 hover:text-slate-700"}`}>
-                  {showPwd ? <EyeOff size={17} /> : <Eye size={17} />}
-                </button>
-              </div>
-              {form.password && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex gap-1">
-                    {[0, 1, 2, 3].map((i) => (
-                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i < strength ? strengthColor : dark ? "bg-white/10" : "bg-slate-200"}`} />
-                    ))}
-                  </div>
-                  <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>Strength: <span className="font-semibold">{strengthLabel}</span></p>
-                </div>
-              )}
-              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
-            </div>
-
-            <div className="mb-3">
-              <Label>Confirm password</Label>
-              <div className="relative">
-                <input type={showConfirm ? "text" : "password"} placeholder="Re-enter your password"
-                  value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                  className={`${fieldCls(!!errors.confirmPassword)} pr-12`} />
-                <button type="button" onClick={() => setConfirm((s) => !s)}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${dark ? "text-slate-400 hover:text-white" : "text-slate-400 hover:text-slate-700"}`}>
-                  {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
-            </div>
-
-            <div className="mb-1.5 flex items-start gap-2.5 pt-1">
-              <input type="checkbox" id="terms" required
-                className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-[#4f39f6] cursor-pointer shrink-0" />
-              <label htmlFor="terms" className={`text-sm cursor-pointer leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
-                I agree to the{" "}
-                <Link href="#" className="text-[#4f39f6] hover:underline font-medium">Terms of Service</Link>{" "}
-                and{" "}
-                <Link href="#" className="text-[#4f39f6] hover:underline font-medium">Privacy Policy</Link>
-              </label>
-            </div>
-
-            <button type="submit" disabled={isBusy}
-              className="w-full h-12 rounded-xl bg-[#4f39f6] hover:bg-[#4530e0] text-white font-semibold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(79,57,246,0.4)]">
-              {isLoading ? (<><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/><path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Creating account…</>) : (<>Create free account <ArrowRight size={16} /></>)}
-            </button>
-          </form>
-
-          <div className="flex items-center gap-3 my-5">
-            <div className={`flex-1 h-px ${dark ? "bg-slate-800" : "bg-slate-200"}`} />
-            <span className={`text-xs font-medium ${dark ? "text-slate-400" : "text-slate-400"}`}>or sign up with email</span>
-            <div className={`flex-1 h-px ${dark ? "bg-slate-800" : "bg-slate-200"}`} />
-          </div>
-
-          <div className="flex gap-3">
-            {(["google", "github", "facebook"] as const).map((provider) => (
-              <button key={provider} onClick={() => handleSocial(provider)} disabled={isBusy} className={socialBtnCls} aria-label={`Sign up with ${provider}`}>
-                {socialLoading === provider ? <Spinner /> : provider === "google" ? <GoogleIcon /> : provider === "github" ? <GithubIcon /> : <FacebookIcon />}
-                <span className="capitalize">{provider}</span>
-              </button>
-            ))}
-          </div>
-
-          <p className={`text-center text-sm mt-6 ${dark ? "text-slate-400" : "text-slate-500"}`}>
-            Already have an account?{" "}
-            <Link href="/login" className="text-[#4f39f6] font-semibold hover:underline">Sign in</Link>
-          </p>
-        </div>
+        {/* Suspense boundary required by Next.js for useSearchParams */}
+        <Suspense fallback={<div className="w-full max-w-[400px] animate-pulse h-[600px] rounded-2xl bg-slate-100 dark:bg-slate-800" />}>
+          <RegisterForm />
+        </Suspense>
       </div>
     </div>
   );
