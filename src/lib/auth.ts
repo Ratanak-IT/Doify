@@ -1,7 +1,7 @@
 // src/lib/auth.ts
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import Database from "better-sqlite3";
+
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API;
 
