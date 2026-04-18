@@ -102,7 +102,9 @@ export default function EditProjectTaskModal({
             </label>
             <textarea
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
               rows={3}
               placeholder="Task details..."
               className="w-full px-3 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-white resize-none"
@@ -117,7 +119,13 @@ export default function EditProjectTaskModal({
               </label>
               <select
                 value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    priority: e.target
+                      .value as import("@/lib/features/types/task-type").TaskPriority,
+                  })
+                }
                 className="w-full h-11 px-3 rounded-md border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-white"
               >
                 <option value="LOW">Low</option>
@@ -147,7 +155,9 @@ export default function EditProjectTaskModal({
             <div className="relative">
               <select
                 value={form.assigneeId}
-                onChange={(e) => setForm({ ...form, assigneeId: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, assigneeId: e.target.value })
+                }
                 className="w-full h-11 pl-9 pr-3 rounded-md border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-white appearance-none"
               >
                 <option value="">— Unassigned —</option>
@@ -170,9 +180,14 @@ export default function EditProjectTaskModal({
                   ) : (
                     <div
                       className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
-                      style={{ backgroundColor: getAvatarColor(selectedMember.user.id) }}
+                      style={{
+                        backgroundColor: getAvatarColor(selectedMember.user.id),
+                      }}
                     >
-                      {getInitials(selectedMember.user.fullName || selectedMember.user.username)}
+                      {getInitials(
+                        selectedMember.user.fullName ||
+                          selectedMember.user.username,
+                      )}
                     </div>
                   )
                 ) : (
@@ -191,7 +206,8 @@ export default function EditProjectTaskModal({
                     onClick={() =>
                       setForm({
                         ...form,
-                        assigneeId: form.assigneeId === m.user.id ? "" : m.user.id,
+                        assigneeId:
+                          form.assigneeId === m.user.id ? "" : m.user.id,
                       })
                     }
                     title={m.user.fullName || m.user.username}
