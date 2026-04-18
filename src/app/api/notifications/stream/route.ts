@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Return the stream response with proper SSE headers
     return new NextResponse(response.body, {
       status: 200,
       headers: {
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Notifications Stream Proxy] Error:", error);
+    // console.error("[Notifications Stream Proxy] Error:", error);
     return NextResponse.json(
       { error: "Stream error", details: String(error) },
       { status: 500 }
