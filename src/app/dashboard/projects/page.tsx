@@ -601,7 +601,6 @@ export default function ProjectsPage() {
     p.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  /* ── Active project view ── */
   if (activeProject) {
     return (
       <div className="flex flex-col h-full overflow-hidden bg-[#F8F9FC] dark:bg-[#1E1B2E]">
@@ -624,15 +623,14 @@ export default function ProjectsPage() {
             )}
           </div>
         </div>
-        <ProjectTasksPanel project={activeProject} />
+        <ProjectTasksPanel project={activeProject} 
+        onBack={() => setActiveProject(null)}/>
       </div>
     );
   }
 
-  /* ── Projects grid ── */
   return (
     <div className="flex flex-col h-full bg-[#F8F9FC] dark:bg-[#1E1B2E]">
-      {/* Header */}
       <DashboardHeader
         onRefresh={refetch}
         onCreate={() => setShowNew(true)}

@@ -12,8 +12,6 @@ import TeamDetailView from "./TeamDetailView";
 import CreateTeamModal from "./modals/CreateTeamModal";
 import EditTeamModal from "./modals/EditTeamModal";
 
-// ── Client-side resolution using RTK Query (auth handled automatically) ────
-// Returns { teamId, projectId, taskId, openComments } or null.
 async function resolveNotification(
   referenceId: string,
   notifType: string,
@@ -26,12 +24,10 @@ async function resolveNotification(
 
   if (isTeam) return { teamId: referenceId, openComments: false };
 
-  // ── Step 1: resolve task & projectId ──────────────────────────────────
   let taskId: string | undefined;
   let projectId: string | undefined;
 
   if (!isProject) {
-    // referenceId should be a taskId (or commentId for comment notifications)
     try {
       const task = await dispatch(
         taskApi.endpoints.getTask.initiate(referenceId)
@@ -63,10 +59,8 @@ async function resolveNotification(
 
   if (!projectId) return null;
 
-  // ── Step 2: find teamId from projectId ────────────────────────────────
   let teamId: string | undefined;
 
-  // Try the project endpoint first
   try {
     const proj = await dispatch(
       taskApi.endpoints.getProject.initiate(projectId)
@@ -74,7 +68,6 @@ async function resolveNotification(
     teamId = proj?.teamId;
   } catch { /* ignore */ }
 
-  // If teamId is still missing, scan all user teams to find which owns the project
   if (!teamId && teams.length > 0) {
     for (const team of teams) {
       try {
@@ -96,7 +89,6 @@ export default function TeamPageClient() {
   const searchParams = useSearchParams();
   const dispatch     = useAppDispatch();
 
-  // URL params: either pre-resolved (teamId in URL) or raw notification (notifRef)
   const teamIdParam    = searchParams?.get("teamId");
   const projectIdParam = searchParams?.get("projectId");
   const taskIdParam    = searchParams?.get("taskId");
@@ -122,8 +114,6 @@ export default function TeamPageClient() {
 
   const prevKeyRef = useRef("");
 
-  // ── Case A: Raw notification reference (notifRef in URL) ──────────────
-  // Resolve client-side using RTK Query (always authenticated).
   useEffect(() => {
     if (!notifRef || !notifType || teams.length === 0) return;
     const key = `${notifType}|${notifRef}`;
@@ -140,12 +130,10 @@ export default function TeamPageClient() {
       setStoredOpenComments(result.openComments);
       doNavigateToTeam(result.teamId);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notifRef, notifType, teams]);
 
-  // ── Case B: Pre-resolved params already in URL (teamId + others) ──────
   useEffect(() => {
-    if (!notifType || notifRef) return; // handled by Case A
+    if (!notifType || notifRef) return; 
     const key = [notifType, teamIdParam, projectIdParam, taskIdParam].filter(Boolean).join("|");
     if (key === prevKeyRef.current) return;
     prevKeyRef.current = key;
@@ -158,10 +146,8 @@ export default function TeamPageClient() {
     if (teamIdParam && teams.length > 0) {
       doNavigateToTeam(teamIdParam);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notifType, teamIdParam, projectIdParam, taskIdParam, commentIdParam, openComments]);
 
-  // ── Case C: teamId in URL, teams loaded after params arrived ──────────
   useEffect(() => {
     if (!teamIdParam || activeTeam || teams.length === 0 || notifRef) return;
     if (projectIdParam) setStoredProjectId(projectIdParam);
@@ -169,7 +155,6 @@ export default function TeamPageClient() {
     if (commentIdParam) setStoredCommentId(commentIdParam);
     if (openComments)   setStoredOpenComments(true);
     doNavigateToTeam(teamIdParam);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teams, teamIdParam, activeTeam]);
 
   function doNavigateToTeam(teamId: string) {
