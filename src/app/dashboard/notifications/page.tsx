@@ -122,7 +122,7 @@ function NotifCard({ notif, onClick, onAcceptInvite }: {
             
           </div>
 
-          {isInvite && notif.referenceId && !notif.isRead && (
+          {isInvite && notif.referenceId && (
             <button
               disabled={accepting}
               onClick={async (e) => {
@@ -163,7 +163,8 @@ export default function NotificationsPage() {
   };
 
   const handleCardClick = async (notif: Notification) => {
-    if (!notif.isRead) {
+    const isInvite = notif.type === "TEAM_INVITATION";
+    if (!notif.isRead && !isInvite) {
       try { await markRead(notif.id); } catch { /* swallow */ }
     }
     router.push(notifHref(notif));

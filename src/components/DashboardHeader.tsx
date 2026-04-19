@@ -122,7 +122,7 @@ function NotificationDropdown({
 
   const handleClick = async (notif: Notification) => {
     onClose();
-    if (!notif.isRead) {
+    if (!notif.isRead && notif.type !== "TEAM_INVITATION") {
       try { await markRead(notif.id); } catch { /* ignore */ }
     }
     router.push(notifHref(notif));
