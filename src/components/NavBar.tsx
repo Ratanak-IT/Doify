@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/lib/contexts/ThemeContext";
-import { X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -141,91 +141,62 @@ export default function NavBar() {
         </div>
       </div>
 
-      {/* Mobile menu — left sidebar drawer */}
+      {/* Mobile menu below navbar */}
       {menuOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
-            onClick={() => setMenuOpen(false)}
-          />
-
-          {/* Sidebar */}
-          <div className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-slate-900 border-r border-white/10 z-50 md:hidden transform transition-transform duration-300 ease-in-out">
-            <div className="flex flex-col h-full">
-              {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-white/10">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/40">
-                    <img src="/logo-doify.png" alt="Doify Logo" className="h-6 w-6 object-contain" />
-                  </div>
-                  <span className="text-lg font-bold tracking-tight text-white">Doify</span>
-                </div>
-                <button
+        <div className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+          <div className="px-4 py-4 space-y-4">
+            <nav className="space-y-2">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-                  aria-label="Close menu"
+                  className={[
+                    "block rounded-2xl px-4 py-3 text-lg font-medium transition-all",
+                    isActive(link.href)
+                      ? "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800",
+                  ].join(" ")}
                 >
-                  <X size={20} />
-                </button>
-              </div>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-              {/* Navigation Links */}
-              <nav className="flex-1 px-4 py-6 space-y-2">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={[
-                      "flex items-center px-4 py-3 rounded-xl text-lg font-medium transition-all",
-                      isActive(link.href)
-                        ? "text-white bg-white/10 border-l-4 border-violet-500"
-                        : "text-slate-300 hover:text-white hover:bg-white/[0.07]",
-                    ].join(" ")}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
+            <div className="grid gap-3">
+              <button
+                onClick={toggleTheme}
+                className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >
+                {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+                {theme === "dark" ? "Light mode" : "Dark mode"}
+              </button>
+              <button className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                </svg>
+                EN / ភ្នំពេញ
+              </button>
+            </div>
 
-              {/* Bottom Actions */}
-              <div className="px-4 py-6 space-y-4 border-t border-white/10">
-                {/* Theme + Language row */}
-                <div className="space-y-3">
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-center gap-3 h-12 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 text-sm font-medium transition-all"
-                  >
-                    {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-                    {theme === "dark" ? "Light mode" : "Dark mode"}
-                  </button>
-                  <button className="w-full flex items-center justify-center gap-3 h-12 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 text-sm font-medium transition-all">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
-                    </svg>
-                    EN / ភ្នំពេញ
-                  </button>
-                </div>
-
-                {/* Auth buttons */}
-                <div className="space-y-3">
-                  <Link
-                    href="/login"
-                    className="flex items-center justify-center h-12 px-4 rounded-xl text-lg font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition-all border border-white/10"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="flex items-center justify-center h-12 px-4 bg-violet-600 text-white text-lg font-bold rounded-xl text-center hover:bg-violet-500 transition-colors shadow-lg shadow-violet-500/25"
-                  >
-                    Get started free
-                  </Link>
-                </div>
-              </div>
+            <div className="grid gap-3 pt-2">
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="w-full inline-flex items-center justify-center h-12 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setMenuOpen(false)}
+                className="w-full inline-flex items-center justify-center h-12 rounded-2xl bg-violet-600 text-white font-semibold hover:bg-violet-500 transition-colors"
+              >
+                Get started free
+              </Link>
             </div>
           </div>
-        </>
+        </div>
       )}
     </header>
   );
