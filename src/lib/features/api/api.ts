@@ -10,7 +10,7 @@ function getTokenFromCookie(): string | null {
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "/api/proxy",
+    baseUrl: "/backend",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token ?? getTokenFromCookie();
       if (token) headers.set("Authorization", `Bearer ${token}`);
