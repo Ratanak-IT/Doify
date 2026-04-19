@@ -1,31 +1,53 @@
 import "./globals.css";
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
+import Script from "next/script";
 import RootProviders from "./RootProviders";
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-};
+const BASE_URL = "https://doify-self.vercel.app";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://doify-self.vercel.app"),
+  metadataBase: new URL(BASE_URL),
   title: {
     default: "Doify — Where teams move work forward",
     template: "%s | Doify",
   },
   description:
-    "Doify helps teams manage projects, tasks, and collaboration with a clean kanban workflow, shared workspaces, and real-time productivity management.",
-  applicationName: "Doify",
-  authors: [{ name: "Doify", url: "https://doify-self.vercel.app" }],
+    "Doify is a modern task management platform. Plan smarter, collaborate in real time, and ship work without the chaos. From daily to-dos to full project pipelines.",
   keywords: [
+    "task management",
     "project management",
     "team collaboration",
-    "task tracker",
     "kanban board",
     "productivity",
-    "work management",
-    "Doify",
+    "doify",
   ],
+  authors: [{ name: "Doify Team", url: BASE_URL }],
+  creator: "Doify",
+  publisher: "Doify",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: BASE_URL,
+    siteName: "Doify",
+    title: "Doify — Where teams move work forward",
+    description:
+      "Plan smarter, collaborate in real time, and ship work without the chaos.",
+    images: [
+      {
+        url: `${BASE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Doify — Task Management Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Doify — Where teams move work forward",
+    description:
+      "Plan smarter, collaborate in real time, and ship work without the chaos.",
+    images: [`${BASE_URL}/og-image.png`],
+  },
   robots: {
     index: true,
     follow: true,
@@ -37,41 +59,72 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  openGraph: {
-    title: "Doify — Where teams move work forward",
-    description:
-      "Doify helps teams manage projects, tasks, and collaboration with a clean kanban workflow, shared workspaces, and real-time productivity management.",
-    type: "website",
-    url: "https://doify-self.vercel.app",
-    siteName: "Doify",
-    images: [
-      {
-        url: "/logo-doify.png",
-        width: 1200,
-        height: 630,
-        alt: "Doify — Team task and project management",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Doify — Where teams move work forward",
-    description:
-      "Doify helps teams manage projects, tasks, and collaboration with a clean kanban workflow, shared workspaces, and real-time productivity management.",
-    images: ["/logo-doify.png"],
-    creator: "@Doify",
+  alternates: {
+    canonical: BASE_URL,
   },
   icons: {
-    icon: "/logo-doify.png",
-    shortcut: "/logo-doify.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Doify",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: BASE_URL,
+  description:
+    "Doify is a modern task management platform designed to help teams plan smarter, collaborate in real time, and ship work without the chaos.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  author: {
+    "@type": "Organization",
+    name: "Doify",
+    url: BASE_URL,
+    logo: `${BASE_URL}/logo-doify.png`,
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+        <link rel="dns-prefetch" href="https://careerpatch.vercel.app" />
+
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body suppressHydrationWarning>
         <RootProviders>{children}</RootProviders>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </body>
     </html>
   );
