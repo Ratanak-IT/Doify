@@ -2,21 +2,23 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/lib/contexts/ThemeContext";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setLanguage } from "@/lib/features/i18n/i18nSlice";
 import { useGetUnreadCountQuery } from "@/lib/features/notifications/notificationsApi";
-import { Sun, Moon, Globe, Bell, User, LogOut, Settings } from "lucide-react";
+import { Sun, Moon, Globe, Bell, User, LogOut, Settings, Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { theme, toggleTheme } = useTheme();
   const { t, language } = useTranslation();
@@ -48,15 +50,18 @@ export default function Navbar() {
     setLangOpen(false);
   };
 
+  const isActive = (path: string) => {
+    return pathname === path;
+  };
+
   if (!mounted) {
     return null;
   }
   const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "About Us", path: "/about" },
-  { name: "Contact Us", path: "/contact" },
-
-];
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about" },
+    { name: "Contact Us", path: "/contact" },
+  ];
 
   return (
     <header className="sticky top-0 z-50">
@@ -80,13 +85,16 @@ export default function Navbar() {
     <Link
       key={item.path}
       href={item.path}
-      className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+      className={`text-lg font-medium transition-colors duration-200 ${
+        isActive(item.path)
+          ? "text-violet-600 dark:text-violet-400"
+          : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+      }`}
     >
       {item.name}
     </Link>
   ))}
 </div>
-
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* Theme Toggle */}
             <button
@@ -262,9 +270,129 @@ export default function Navbar() {
                 </Link>
               </>
             )}
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? (
+                <X size={20} className="text-slate-600 dark:text-slate-300" />
+              ) : (
+                <Menu size={20} className="text-slate-600 dark:text-slate-300" />
+              )}
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+          <div className="px-4 py-4 space-y-4">
+            {/* Navigation Links */}
+            <nav className="space-y-2">
+              {navLinks.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block text-lg font-medium py-2 px-3 rounded-lg transition-colors duration-200 ${
+                    isActive(item.path)
+                      ? "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Theme</span>
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                {theme === "light" ? (
+                  <Moon size={18} className="text-slate-600 dark:text-slate-300" />
+                ) : (
+                  <Sun size={18} className="text-slate-600 dark:text-yellow-400" />
+                )}
+              </button>
+            </div>
+
+            {/* Language Selector */}
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Language</span>
+              <div className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1"
+                >
+                  <Globe size={18} className="text-slate-600 dark:text-slate-300" />
+                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    {language.toUpperCase()}
+                  </span>
+                </button>
+
+                {langOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setLangOpen(false)}
+                    />
+                    <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-20 min-w-[120px] overflow-hidden">
+                      <button
+                        onClick={() => handleLanguageChange("en")}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
+                          language === "en"
+                            ? "bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 font-semibold"
+                            : "text-slate-600 dark:text-slate-300"
+                        }`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => handleLanguageChange("kh")}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
+                          language === "kh"
+                            ? "bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 font-semibold"
+                            : "text-slate-600 dark:text-slate-300"
+                        }`}
+                      >
+                        ខ្មែរ
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Auth Actions */}
+            {!user && (
+              <div className="space-y-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 shadow-purple-500/25"
+                >
+                  {t("nav.getStarted")}
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

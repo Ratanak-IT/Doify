@@ -22,32 +22,32 @@ export default function Footer() {
           <div className="lp-footer-section">
             <p className="lp-footer-title">Website</p>
             <div className="lp-footer-stack">
-              <a href="#" className="lp-footer-link">Home</a>
-              <a href="#features" className="lp-footer-link">Features</a>
-              <a href="#pricing" className="lp-footer-link">Pricing</a>
-              <a href="#testimonials" className="lp-footer-link">Testimonials</a>
-              <a href="#contact" className="lp-footer-link">Contact</a>
+              <Link href="/" className="lp-footer-link">Home</Link>
+              <Link href="/#features" className="lp-footer-link">Features</Link>
+              <Link href="/#pricing" className="lp-footer-link">Pricing</Link>
+              <Link href="/#testimonials" className="lp-footer-link">Testimonials</Link>
+              <Link href="/contact" className="lp-footer-link">Contact</Link>
             </div>
           </div>
 
           <div className="lp-footer-section">
             <p className="lp-footer-title">Task Manager</p>
             <div className="lp-footer-stack">
-              <a href="#" className="lp-footer-link">For Teams</a>
-              <a href="#" className="lp-footer-link">Workflows</a>
-              <a href="#" className="lp-footer-link">Security</a>
-              <a href="#" className="lp-footer-link">Integrations</a>
-              <a href="#" className="lp-footer-link">Support</a>
+              <Link href="/#features" className="lp-footer-link">For Teams</Link>
+              <Link href="/#features" className="lp-footer-link">Workflows</Link>
+              <Link href="/#features" className="lp-footer-link">Security</Link>
+              <Link href="/#features" className="lp-footer-link">Integrations</Link>
+              <Link href="/contact" className="lp-footer-link">Support</Link>
             </div>
           </div>
 
           <div className="lp-footer-section">
             <p className="lp-footer-title">Legal</p>
             <div className="lp-footer-stack">
-              <a href="#" className="lp-footer-link">Privacy</a>
-              <a href="#" className="lp-footer-link">Terms</a>
-              <a href="#" className="lp-footer-link">Status</a>
-              <a href="#" className="lp-footer-link">Help</a>
+              <Link href="/contact" className="lp-footer-link">Privacy</Link>
+              <Link href="/contact" className="lp-footer-link">Terms</Link>
+              <Link href="/contact" className="lp-footer-link">Status</Link>
+              <Link href="/contact" className="lp-footer-link">Help</Link>
             </div>
           </div>
         </div>
