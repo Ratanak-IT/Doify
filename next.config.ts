@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -19,11 +20,11 @@ const nextConfig: NextConfig = {
   },
 
   compress: true,
+
   async headers() {
     return [
       {
-        source:
-          "/:all*(\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|woff|woff2|ttf|otf))",
+        source: "/_next/static/:path*",
         headers: [
           {
             key: "Cache-Control",
@@ -32,7 +33,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/_next/static/:path*",
+        source: "/images/:path*",
         headers: [
           {
             key: "Cache-Control",
