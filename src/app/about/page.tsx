@@ -30,7 +30,7 @@ export default function AboutPage() {
       name: "MOM REKSMEY",
       subject: "Frontend",
       institution: "ISTAD Advisor",
-      img: "blob:https://web.telegram.org/e0c0c551-acc7-4668-9669-2d665fc90555",
+      img: "../../../public/momreaksmey.jpg",
       bio: "Guided and reviewed the project.",
       skills: ["Scrum", "Leadership", "Strategy"],
     },
