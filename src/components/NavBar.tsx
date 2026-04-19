@@ -179,6 +179,8 @@ export default function NavBar() {
               </button>
             </div>
 
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700" />
+
             <div className="grid gap-3 pt-2">
               <Link
                 href="/login"
