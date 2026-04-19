@@ -63,9 +63,9 @@ export const metadata: Metadata = {
     canonical: BASE_URL,
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo-doify.png",
+    shortcut: "/logo-doify.png",
+    apple: "/logo-doify.png",
   },
   verification: {
     google: "9e1f13451108292f",
