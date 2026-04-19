@@ -435,7 +435,6 @@ function ProjectCard({
   onSelect: (p: Project) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const progress = Math.min(100, Math.max(0, project.progress ?? 0));
   const statusKey = project.status ?? "active";
   const { data: projectTasksPage } = useGetProjectTasksQuery({
     projectId: project.id,
@@ -450,7 +449,12 @@ function ProjectCard({
     : project.tasksCount ?? project.totalTasks ?? 0;
   const parentTasksDone = queryHasTasks
     ? parentTasks.filter((task) => task.status === "DONE").length
-    : project.tasksDone ?? Math.round((progress / 100) * parentTasksCount);
+    : project.tasksDone ?? 0;
+
+  const progress =
+    parentTasksCount > 0
+      ? Math.round((parentTasksDone / parentTasksCount) * 100)
+      : Math.min(100, Math.max(0, project.progress ?? 0));
 
   function formatDate(dateStr: string) {
     const months = [
