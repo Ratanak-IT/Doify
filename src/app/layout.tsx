@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     siteName: "Doify",
     images: [
       {
-        url: "/file.svg",
+        url: "/logo-doify.png",
         width: 1200,
         height: 630,
         alt: "Doify — Team task and project management",
@@ -58,12 +58,12 @@ export const metadata: Metadata = {
     title: "Doify — Where teams move work forward",
     description:
       "Doify helps teams manage projects, tasks, and collaboration with a clean kanban workflow, shared workspaces, and real-time productivity management.",
-    images: ["/file.svg"],
+    images: ["/logo-doify.png"],
     creator: "@Doify",
   },
   icons: {
-    icon: "/file.svg",
-    shortcut: "/file.svg",
+    icon: "/logo-doify.png",
+    shortcut: "/logo-doify.png",
   },
 };
 
