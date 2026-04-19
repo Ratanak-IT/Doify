@@ -1,6 +1,11 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import RootProviders from "./RootProviders";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://doify-self.vercel.app"),
@@ -21,7 +26,6 @@ export const metadata: Metadata = {
     "work management",
     "Doify",
   ],
-  viewport: "width=device-width, initial-scale=1",
   robots: {
     index: true,
     follow: true,

@@ -122,7 +122,7 @@ function NotifCard({ notif, onClick, onAcceptInvite }: {
             
           </div>
 
-          {isInvite && notif.referenceId && (
+          {isInvite && notif.referenceId && !notif.isRead && (
             <button
               disabled={accepting}
               onClick={async (e) => {

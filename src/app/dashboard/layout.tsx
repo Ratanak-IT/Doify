@@ -13,7 +13,6 @@ export default function DashboardLayout({
       <AppSidebar />
       <SidebarInset>
         <AuthRehydrator />
-        {/* Real-time notification stream (SSE → polling fallback) */}
         <NotificationStreamProvider />
         {children}
       </SidebarInset>
