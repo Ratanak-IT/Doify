@@ -5,7 +5,7 @@ export default function FooterWrapper() {
     <footer className="bg-white dark:bg-[#1a1c2e] border-t border-slate-200 dark:border-[#2a2d45] text-slate-500 dark:text-slate-400 pt-10 sm:pt-14 pb-6 sm:pb-8 px-4 sm:px-8 transition-colors">
       <div className="max-w-5xl mx-auto mb-10">
         {/* Top row: Brand + Columns */}
-        <div className="flex flex-col sm:flex-row sm:justify-between gap-10">
+        <div className="flex flex-col md:flex-row md:justify-between gap-10">
           {/* Brand */}
           <div className="shrink-0">
             <div className="flex items-center gap-2.5 mb-3.5">
@@ -24,7 +24,7 @@ export default function FooterWrapper() {
           </div>
 
           {/* Page + Setting side by side */}
-          <div className="grid grid-cols-2 gap-10 sm:gap-16">
+          <div className="grid grid-cols-2 gap-10 md:gap-16">
             {/* Page */}
             <div>
               <h4 className="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-widest mb-4">

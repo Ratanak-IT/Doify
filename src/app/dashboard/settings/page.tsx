@@ -34,7 +34,6 @@ const navItems = [
   { id: "password" as const, label: "Security", icon: Shield, desc: "Password & access" },
 ];
 
-/* Matches dashboard: bg-slate-50 / dark:bg-[#1E1B2E] */
 const inputCls =
   "w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors " +
   "bg-white dark:bg-[#252840] border-slate-200 dark:border-[#2a2d45] " +
@@ -151,7 +150,6 @@ export default function SettingsPage() {
     <>
       <DashboardHeader showCreate={false} />
 
-      {/* Same bg as dashboard main: bg-slate-50 dark:bg-[#1E1B2E] */}
       <div className="flex-1 min-h-screen pb-20 md:pb-0 bg-slate-50 dark:bg-[#1E1B2E]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
@@ -347,7 +345,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Mobile tab bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex bg-white dark:bg-[#1a1c2e] border-t border-slate-200 dark:border-[#2a2d45]">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 flex bg-white dark:bg-[#1a1c2e] border-t border-slate-200 dark:border-[#2a2d45]">
         {navItems.map(({ id, label, icon: Icon }) => (
           <button key={id}
             onClick={() => { setActiveSection(id); setErrors([]); }}
