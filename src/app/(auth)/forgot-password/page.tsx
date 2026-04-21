@@ -39,11 +39,10 @@ export default function ForgotPasswordPage() {
     <div className={`min-h-screen flex transition-colors ${dark ? "bg-slate-900" : "bg-slate-50"}`}>
 
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-[58%] flex-col justify-between p-12 overflow-hidden"
-        style={{ background: "linear-gradient(131deg, #312c85 0%, #59168b 50%, #372aac 100%)" }}>
+      <div className="hidden lg:flex lg:w-[58%] flex-col justify-between p-12 overflow-hidden bg-blue-500 dark:bg-slate-800">
         <Link href="/" className="flex items-center gap-3 w-fit group">
-          <div className="w-10 h-10 rounded-[14px] bg-white/20 group-hover:bg-white/30 flex items-center justify-center transition-colors">
-            <CheckCircle2 size={24} className="text-white" />
+          <div className="w-12 h-12 rounded-[15px] bg-white group-hover:bg-white/30 flex items-center justify-center transition-colors">
+            <img src="/logo-doify.png" alt="Doify Logo" className="w-10 h-10" />
           </div>
           <span className="text-white text-2xl font-bold">Doify</span>
         </Link>
@@ -51,8 +50,8 @@ export default function ForgotPasswordPage() {
         <div className="space-y-8">
           <div>
             <h1 className="text-5xl font-bold text-white leading-tight">Account</h1>
-            <h1 className="text-5xl font-bold text-[#a3b3ff] leading-tight">recovery.</h1>
-            <p className="text-[#c6d2ff] text-lg mt-4 max-w-md">No worries — we&apos;ll help you get back into your workspace in no time.</p>
+            <h1 className="text-5xl font-bold text-white leading-tight">recovery.</h1>
+            <p className="text-white text-lg mt-4 max-w-md">No worries — we&apos;ll help you get back into your workspace in no time.</p>
           </div>
           <div className="space-y-3">
             {[
@@ -63,8 +62,8 @@ export default function ForgotPasswordPage() {
               <div key={f.title} className="mt-3 flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-4">
                 <div className="w-10 h-10 rounded-[14px] bg-[rgba(97,95,255,0.5)] flex items-center justify-center text-white shrink-0">{f.icon}</div>
                 <div>
-                  <p className="text-white text-sm font-semibold">{f.title}</p>
-                  <p className="text-[#c6d2ff] text-sm">{f.desc}</p>
+                  <p className="text-white text-lg font-semibold">{f.title}</p>
+                  <p className="text-white text-md">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -75,7 +74,7 @@ export default function ForgotPasswordPage() {
           {[{ val: "10K+", label: "Teams" }, { val: "50K+", label: "Tasks Daily" }, { val: "99.9%", label: "Uptime" }].map((s) => (
             <div key={s.label}>
               <p className="text-white text-2xl font-bold">{s.val}</p>
-              <p className="text-[#a3b3ff] text-sm">{s.label}</p>
+              <p className="text-white text-md">{s.label}</p>
             </div>
           ))}
         </div>
@@ -87,9 +86,9 @@ export default function ForgotPasswordPage() {
 
           {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-10 lg:hidden justify-center">
-            <div className="w-10 h-10 rounded-[14px] bg-[#4f39f6] flex items-center justify-center">
-              <CheckCircle2 size={20} className="text-white" />
-            </div>
+            <div className="w-12 h-12 rounded-[15px] bg-white group-hover:bg-white/30 flex items-center justify-center transition-colors">
+            <img src="/logo-doify.png" alt="Doify Logo" className="w-10 h-10" />
+          </div>
             <span className={`text-xl font-bold ${dark ? "text-white" : "text-slate-950"}`}>Doify</span>
           </div>
 
@@ -128,7 +127,7 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)} className={fieldCls} />
                 </div>
                 <button type="submit" disabled={isLoading}
-                  className="mt-3 w-full h-12 rounded-[14px] bg-[#4f39f6] text-white text-base font-semibold hover:bg-[#4530e0] transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(79,57,246,0.4)]">
+                  className="mt-3 w-full h-12 rounded-[14px] bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold flex items-center justify-center gap-2">
                   {isLoading
                     ? <><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/><path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Sending…</>
                     : <>Send reset link <ArrowRight size={16} /></>

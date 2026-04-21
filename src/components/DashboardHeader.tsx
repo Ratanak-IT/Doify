@@ -256,7 +256,7 @@ export default function DashboardHeader({
     .slice(0, 2) ?? "?";
 
   const handleLogout = async () => {
-    if (isLoggingOut) return; // Prevent multiple logout attempts
+    if (isLoggingOut) return;
     
     setIsLoggingOut(true);
     setMenuOpen(false);
@@ -265,7 +265,6 @@ export default function DashboardHeader({
     router.replace("/login");
   };
 
-  // Close bell dropdown when clicking outside
   useEffect(() => {
     if (!bellOpen) return;
     const handler = (e: MouseEvent) => {

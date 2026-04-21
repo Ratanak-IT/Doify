@@ -13,7 +13,6 @@ import {
   Zap,
   Users,
   BarChart3,
-  CheckCircle2,
   ArrowRight,
 } from "lucide-react";
 import type { z } from "zod";
@@ -214,7 +213,7 @@ function LoginForm() {
             </label>
             <Link
               href="/forgot-password"
-              className="mb-1.5 text-sm font-medium dark:text-white text-[#4f39f6] hover:underline"
+              className="mb-1.5 text-sm font-medium dark:text-white text-blue-600 hover:underline"
             >
               Forgot password?
             </Link>
@@ -243,7 +242,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isBusy}
-          className="w-full h-12 rounded-xl bg-[#4f39f6] hover:bg-[#4530e0] text-white font-semibold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(79,57,246,0.4)]"
+          className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
@@ -311,7 +310,7 @@ function LoginForm() {
         Don&apos;t have an account?{" "}
         <Link
           href="/register"
-          className="text-[#4f39f6] font-semibold hover:underline dark:text-gray-300"
+          className="text-blue-600 font-semibold hover:underline dark:text-gray-300"
         >
           Create account
         </Link>
@@ -325,15 +324,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex transition-colors bg-white dark:bg-slate-900">
       {/* Left branding panel */}
       <div
-        className="hidden lg:flex lg:w-[58%] flex-col justify-between p-12 overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(131deg, #312c85 0%, #59168b 50%, #372aac 100%)",
-        }}
-      >
+        className="hidden lg:flex lg:w-[58%] flex-col justify-between p-12 overflow-hidden bg-blue-500 dark:bg-slate-800">
         <Link href="/" className="flex items-center gap-3 w-fit group">
-          <div className="w-10 h-10 rounded-[14px] bg-white/20 group-hover:bg-white/30 flex items-center justify-center transition-colors">
-            <CheckCircle2 size={24} className="text-white" />
+          <div className="w-12 h-12 rounded-[15px] bg-white group-hover:bg-white/30 flex items-center justify-center transition-colors">
+            <img src="/logo-doify.png" alt="Doify Logo" className="w-10 h-10" />
           </div>
           <span className="text-white text-2xl font-bold">Doify</span>
         </Link>
@@ -343,10 +337,10 @@ export default function LoginPage() {
             <h1 className="text-5xl font-bold text-white leading-tight">
               Manage tasks
             </h1>
-            <h1 className="text-5xl font-bold text-[#a3b3ff] leading-tight">
+            <h1 className="text-5xl font-bold text-white dark:text-gray-100 leading-tight">
               smarter.
             </h1>
-            <p className="text-[#c6d2ff] text-lg mt-4 max-w-md">
+            <p className="text-white text-lg mt-4 max-w-md">
               The all-in-one platform for teams to plan, track, and deliver
               outstanding work.
             </p>
@@ -377,8 +371,8 @@ export default function LoginPage() {
                   {f.icon}
                 </div>
                 <div>
-                  <p className="text-white text-sm font-semibold">{f.title}</p>
-                  <p className="text-[#c6d2ff] text-sm">{f.desc}</p>
+                  <p className="text-white text-lg font-semibold">{f.title}</p>
+                  <p className="text-white text-md">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -393,7 +387,7 @@ export default function LoginPage() {
           ].map((s) => (
             <div key={s.label}>
               <p className="text-white text-2xl font-bold">{s.val}</p>
-              <p className="text-[#a3b3ff] text-sm">{s.label}</p>
+              <p className="text-white text-md">{s.label}</p>
             </div>
           ))}
         </div>
@@ -406,8 +400,8 @@ export default function LoginPage() {
           href="/"
           className="flex items-center gap-3 mb-10 lg:hidden group"
         >
-          <div className="w-10 h-10 rounded-[14px] bg-[#4f39f6] group-hover:bg-[#4530e0] flex items-center justify-center transition-colors">
-            <CheckCircle2 size={20} className="text-white" />
+          <div className="w-12 h-12 rounded-[15px] bg-white group-hover:bg-white/30 flex items-center justify-center transition-colors">
+            <img src="/logo-doify.png" alt="Doify Logo" className="w-10 h-10" />
           </div>
           <span className="text-xl font-bold text-slate-900 dark:text-white">
             Doify
