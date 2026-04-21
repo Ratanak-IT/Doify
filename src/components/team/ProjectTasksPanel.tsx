@@ -19,7 +19,7 @@ import {
 } from "@/lib/features/tasks/taskApi";
 import ParentTaskDetailView from "./ParentTaskDetailView";
 import UpdateProjectModal from "./modals/UpdateProjectModal";
-
+import EditProjectTaskModal from "./EditProjectTaskModal";
 
 type TaskStatus = "TODO"|"IN_PROGRESS"|"IN_REVIEW"|"DONE";
 
@@ -337,7 +337,7 @@ function TeamTaskCard({
 
       {/* Edit Modal */}
       {showEdit && (
-        <CreateProjectTaskModal
+        <EditProjectTaskModal
           task={task}
           projectId={projectId}
           teamId={teamId}
