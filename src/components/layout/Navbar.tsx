@@ -7,6 +7,7 @@ import { useTheme } from "@/lib/contexts/ThemeContext";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setLanguage } from "@/lib/features/i18n/i18nSlice";
+import { logout } from "@/lib/features/auth/authSlice";
 import { useGetUnreadCountQuery } from "@/lib/features/notifications/notificationsApi";
 import {
   Sun,
@@ -25,6 +26,7 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -55,6 +57,20 @@ export default function Navbar() {
   const handleLanguageChange = (newLang: "en" | "kh") => {
     dispatch(setLanguage(newLang));
     setLangOpen(false);
+  };
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent multiple logout attempts
+    
+    setIsLoggingOut(true);
+    setProfileOpen(false);
+    setMobileMenuOpen(false);
+    
+    // Clear state and redirect
+    dispatch(logout());
+    
+    // Use replace to prevent going back to dashboard
+    router.replace("/login");
   };
 
   const isActive = (path: string) => pathname === path;
@@ -231,13 +247,11 @@ export default function Navbar() {
                         </Link>
                         <div className="border-t border-slate-200 dark:border-slate-700 my-1" />
                         <button
-                          onClick={() => {
-                            setProfileOpen(false);
-                            router.push("/login");
-                          }}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors"
+                          onClick={handleLogout}
+                          disabled={isLoggingOut}
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <LogOut size={14} /> Sign out
+                          <LogOut size={14} /> {isLoggingOut ? "Signing out..." : "Sign out"}
                         </button>
                       </div>
                     </>
@@ -254,7 +268,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-lg hover:-translate-y-0.5 shadow-purple-500/25"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-lg hover:-translate-y-0.5 shadow-blue-500/25"
                 >
                   {t("nav.getStarted")}
                 </Link>
@@ -423,13 +437,11 @@ export default function Navbar() {
               </div>
             </div>
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                router.push("/login");
-              }}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <LogOut size={15} /> Sign out
+              <LogOut size={15} /> {isLoggingOut ? "Signing out..." : "Sign out"}
             </button>
           </div>
         )}

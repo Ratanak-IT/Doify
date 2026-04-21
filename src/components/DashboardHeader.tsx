@@ -240,9 +240,9 @@ export default function DashboardHeader({
   const { theme, toggleTheme } = useTheme();
   const [menuOpen,  setMenuOpen]  = useState(false);
   const [bellOpen,  setBellOpen]  = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
 
-  // Poll every 10 s so the badge stays fresh and other users' actions appear quickly
   const { data: unread } = useGetUnreadCountQuery(undefined, { pollingInterval: 10_000 });
   const { data: recentPage } = useGetNotificationsQuery({ page: 0, size: 20 }, { pollingInterval: 10_000 });
   const countFromList = (recentPage?.content ?? []).filter((n) => !n.isRead).length;
@@ -255,10 +255,14 @@ export default function DashboardHeader({
     .toUpperCase()
     .slice(0, 2) ?? "?";
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent multiple logout attempts
+    
+    setIsLoggingOut(true);
     setMenuOpen(false);
+    
     dispatch(logout());
-    router.push("/login");
+    router.replace("/login");
   };
 
   // Close bell dropdown when clicking outside
@@ -447,10 +451,11 @@ export default function DashboardHeader({
                 <div className="px-2 pb-2 pt-1 border-t border-[#F1F5F9] dark:border-[#2a2d45]">
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                    disabled={isLoggingOut}
+                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <LogOut size={16} className="shrink-0" />
-                    Sign out
+                    {isLoggingOut ? "Signing out..." : "Sign out"}
                   </button>
                 </div>
 
