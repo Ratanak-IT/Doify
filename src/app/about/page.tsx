@@ -6,6 +6,7 @@ import {
   Sparkles, Users, Calendar,
   Rocket, Lightbulb, Code2,
 } from "lucide-react";
+import { Metadata } from "next";
 
 const GitHubIcon = () => (
   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -147,7 +148,14 @@ const colorMap: Record<string, string> = {
   emerald: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
 };
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn about the Doify team and our mission.",
+  openGraph: {
+    title: "About | Doify",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+};
 export default function AboutPage() {
   return (
     <div className="font-sans bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-white">

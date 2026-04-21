@@ -17,10 +17,20 @@ import {
   Instagram,
   Loader2,
 } from "lucide-react";
+import { Metadata } from "next";
 
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE;
 const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE;
 const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC;
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with the Doify team.",
+  openGraph: {
+    title: "Contact | Doify",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+};
 
 export default function ContactPage() {
   const [form, setForm] = useState({
