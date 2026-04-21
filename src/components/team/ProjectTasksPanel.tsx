@@ -1,6 +1,5 @@
 "use client";
 import CreateProjectTaskModal from "./CreateProjectTaskModal";
-import EditProjectTaskModal from "./EditProjectTaskModal";
 import { useMemo, useRef, useState, useEffect } from "react";
 import {
   MessageSquare, Plus, Search, Trash2,
@@ -20,6 +19,7 @@ import {
 } from "@/lib/features/tasks/taskApi";
 import ParentTaskDetailView from "./ParentTaskDetailView";
 import UpdateProjectModal from "./modals/UpdateProjectModal";
+
 
 type TaskStatus = "TODO"|"IN_PROGRESS"|"IN_REVIEW"|"DONE";
 
@@ -337,7 +337,7 @@ function TeamTaskCard({
 
       {/* Edit Modal */}
       {showEdit && (
-        <EditProjectTaskModal
+        <CreateProjectTaskModal
           task={task}
           projectId={projectId}
           teamId={teamId}

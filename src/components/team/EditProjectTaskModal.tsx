@@ -1,76 +1,73 @@
 "use client";
 
 import { useState } from "react";
-import { X, User } from "lucide-react";
-import { useCreateProjectTaskMutation } from "@/lib/features/tasks/taskApi";
+import { X, Loader, User } from "lucide-react";
+import { useUpdateProjectTaskMutation } from "@/lib/features/tasks/taskApi";
 import { useGetTeamMembersQuery } from "@/lib/features/team/teamApi";
 import { getAvatarColor, getInitials } from "@/lib/features/team/team.utils";
-import type { TaskStatus } from "@/lib/features/types/task-type";
+import type { Task, TaskStatus, TaskPriority } from "@/lib/features/types/task-type";
 
 type Props = {
+  task: Task;
   projectId: string;
   teamId: string;
-  defaultStatus?: TaskStatus;
   onClose: () => void;
 };
 
-export default function CreateProjectTaskModal({
+type FormState = {
+  title: string;
+  description: string;
+  priority: TaskPriority;
+  dueDate: string;
+  assigneeId: string;
+};
+
+export default function EditProjectTaskModal({
+  task,
   projectId,
   teamId,
-  defaultStatus,
   onClose,
 }: Props) {
-  const [createProjectTask, { isLoading }] = useCreateProjectTaskMutation();
+  const [updateProjectTask, { isLoading }] = useUpdateProjectTaskMutation();
   const { data: membersPage } = useGetTeamMembersQuery({ teamId });
   const members = membersPage?.content ?? [];
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    priority: "MEDIUM",
-    dueDate: "",
-    assigneeId: "",
+  const [form, setForm] = useState<FormState>({
+    title: task.title,
+    description: task.description ?? "",
+    priority: task.priority,
+    dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+    assigneeId: task.assignees?.[0]?.id ?? "",
   });
 
   const [apiError, setApiError] = useState("");
-  const [errors, setErrors] = useState<{ title?: string; dueDate?: string }>({});
-
-  const handleDueDateChange = (value: string) => {
-    setForm((prev) => ({ ...prev, dueDate: value }));
-    if (!value) {
-      setErrors((prev) => ({ ...prev, dueDate: "Due date is required" }));
-    } else {
-      setErrors((prev) => ({ ...prev, dueDate: undefined }));
-    }
-  };
+  const [errors, setErrors] = useState<{ title?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError("");
 
-    const fe: typeof errors = {};
-    if (!form.title.trim()) fe.title = "Task title is required";
-    if (!form.dueDate) fe.dueDate = "Due date is required";
-
-    if (Object.keys(fe).length > 0) {
-      setErrors(fe);
+    if (!form.title.trim()) {
+      setErrors({ title: "Task title is required" });
       return;
     }
 
     try {
-      await createProjectTask({
+      await updateProjectTask({
         projectId,
-        title: form.title.trim(),
-        description: form.description || undefined,
-        priority: form.priority,
-        dueDate: form.dueDate || undefined,
-        assigneeId: form.assigneeId || undefined,
-        ...(defaultStatus ? { status: defaultStatus } : {}),
-      } as any).unwrap();
+        taskId: task.id,
+        data: {
+          title: form.title.trim(),
+          description: form.description || undefined,
+          priority: form.priority,   // TaskPriority extends string — no cast needed
+          dueDate: form.dueDate || undefined,
+          assigneeId: form.assigneeId || undefined,
+        },
+      }).unwrap();
       onClose();
     } catch (err: unknown) {
       const e = err as { data?: { message?: string } };
-      setApiError(e?.data?.message ?? "Failed to create task.");
+      setApiError(e?.data?.message ?? "Failed to update task.");
     }
   };
 
@@ -79,9 +76,10 @@ export default function CreateProjectTaskModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-xl shadow-2xl w-full sm:max-w-md max-h-[92dvh] overflow-y-auto">
+        {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-200 dark:border-slate-800">
           <h2 className="text-base font-bold text-slate-900 dark:text-white">
-            New Project Task
+            Edit Task
           </h2>
           <button
             onClick={onClose}
@@ -105,11 +103,20 @@ export default function CreateProjectTaskModal({
             </label>
             <input
               value={form.title}
-              onChange={(e) => { setForm({ ...form, title: e.target.value }); setErrors((p) => ({ ...p, title: undefined })); }}
+              onChange={(e) => {
+                setForm({ ...form, title: e.target.value });
+                setErrors({});
+              }}
               placeholder="Task title"
-              className={`w-full h-11 px-3 rounded-md border text-sm outline-none bg-white dark:bg-slate-800 dark:text-white focus:border-blue-500 ${errors.title ? "border-red-400" : "border-slate-200 dark:border-slate-700"}`}
+              className={`w-full h-11 px-3 rounded-md border text-sm outline-none bg-white dark:bg-slate-800 dark:text-white focus:border-blue-500 ${
+                errors.title
+                  ? "border-red-400"
+                  : "border-slate-200 dark:border-slate-700"
+              }`}
             />
-            {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -134,7 +141,9 @@ export default function CreateProjectTaskModal({
               </label>
               <select
                 value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, priority: e.target.value as TaskPriority })
+                }
                 className="w-full h-11 px-3 rounded-md border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-white"
               >
                 <option value="LOW">Low</option>
@@ -145,19 +154,18 @@ export default function CreateProjectTaskModal({
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                Due date <span className="text-red-500">*</span>
+                Due date
               </label>
               <input
                 type="date"
                 value={form.dueDate}
-                onChange={(e) => handleDueDateChange(e.target.value)}
-                className={`w-full h-11 px-3 rounded-md border text-sm outline-none bg-white dark:bg-slate-800 dark:text-white focus:border-blue-500 ${errors.dueDate ? "border-red-400" : "border-slate-200 dark:border-slate-700"}`}
+                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                className="w-full h-11 px-3 rounded-md border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-white"
               />
-              {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
             </div>
           </div>
 
-          {/* ✅ Assignee */}
+          {/* Assignee */}
           <div>
             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
               Assign to
@@ -199,7 +207,7 @@ export default function CreateProjectTaskModal({
               </div>
             </div>
 
-            {/* Member list preview */}
+            {/* Avatar quick-pick */}
             {members.length > 0 && (
               <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                 {members.slice(0, 6).map((m) => (
@@ -255,10 +263,11 @@ export default function CreateProjectTaskModal({
             </button>
             <button
               type="submit"
-              disabled={isLoading}
-              className="flex-1 h-12 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+              disabled={isLoading || !form.title.trim()}
+              className="flex-1 h-12 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              {isLoading ? "Creating..." : "Create Task"}
+              {isLoading && <Loader size={14} className="animate-spin" />}
+              {isLoading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
