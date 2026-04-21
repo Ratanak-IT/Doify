@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   Calendar,
@@ -548,11 +549,33 @@ export default function ParentTaskDetailView({
     updateTask({ id, data: { status } });
   const handleUpdate = (id: string, title: string, desc: string) =>
     updateTask({ id, data: { title, description: desc || undefined } });
-  const handleDeleteSubtask = (id: string) => deleteTask(id);
+  const handleDeleteSubtask = async (id: string) => {
+    try {
+      await deleteTask(id).unwrap();
+      toast.success("Subtask deleted.");
+    } catch (err: unknown) {
+      const e = err as { status?: number; data?: { message?: string } };
+      if (e?.status === 403) {
+        toast.error("You don't have permission to delete this subtask.");
+      } else {
+        toast.error(e?.data?.message ?? "Failed to delete subtask.");
+      }
+    }
+  };
   const handleDeleteParent = async () => {
     if (!confirm("Delete this parent task and all its subtasks?")) return;
-    await deleteTask(task.id);
-    onBack();
+    try {
+      await deleteTask(task.id).unwrap();
+      toast.success("Task deleted.");
+      onBack();
+    } catch (err: unknown) {
+      const e = err as { status?: number; data?: { message?: string } };
+      if (e?.status === 403) {
+        toast.error("You don't have permission to delete this task.");
+      } else {
+        toast.error(e?.data?.message ?? "Failed to delete task.");
+      }
+    }
   };
 
   const avatarBg = getAvatarColor(task.id ?? task.title);

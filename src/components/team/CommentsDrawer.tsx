@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Check, Edit2, Trash2, X, Send } from "lucide-react";
 import {
   useGetCommentsQuery,
@@ -58,19 +59,39 @@ export default function CommentsDrawer({
 
   const submit = async () => {
     if (!text.trim()) return;
-    await addComment({ taskId: task.id, content: text.trim() });
-    setText("");
+    try {
+      await addComment({ taskId: task.id, content: text.trim() }).unwrap();
+      setText("");
+      toast.success("Comment added.");
+    } catch (err: unknown) {
+      const e = err as { status?: number; data?: { message?: string } };
+      if (e?.status === 403) {
+        toast.error("You don't have permission to add comments.");
+      } else {
+        toast.error(e?.data?.message ?? "Failed to add comment.");
+      }
+    }
   };
 
   const saveEdit = async (commentId: string) => {
     if (!editText.trim()) return;
-    await updateComment({
-      taskId: task.id,
-      commentId,
-      content: editText.trim(),
-    });
-    setEditId(null);
-    setEditText("");
+    try {
+      await updateComment({
+        taskId: task.id,
+        commentId,
+        content: editText.trim(),
+      }).unwrap();
+      setEditId(null);
+      setEditText("");
+      toast.success("Comment updated.");
+    } catch (err: unknown) {
+      const e = err as { status?: number; data?: { message?: string } };
+      if (e?.status === 403) {
+        toast.error("You don't have permission to edit this comment.");
+      } else {
+        toast.error(e?.data?.message ?? "Failed to update comment.");
+      }
+    }
   };
 
   const cancelEdit = () => {
@@ -79,7 +100,17 @@ export default function CommentsDrawer({
   };
 
   const handleDelete = async (commentId: string) => {
-    await deleteComment({ taskId: task.id, commentId });
+    try {
+      await deleteComment({ taskId: task.id, commentId }).unwrap();
+      toast.success("Comment deleted.");
+    } catch (err: unknown) {
+      const e = err as { status?: number; data?: { message?: string } };
+      if (e?.status === 403) {
+        toast.error("You don't have permission to delete this comment.");
+      } else {
+        toast.error(e?.data?.message ?? "Failed to delete comment.");
+      }
+    }
   };
 
   const timeAgo = (iso: string) => {
