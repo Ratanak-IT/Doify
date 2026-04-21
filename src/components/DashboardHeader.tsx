@@ -293,11 +293,10 @@ export default function DashboardHeader({
           </button>
         )}
 
-        {/* Create button */}
         {showCreate && onCreate && (
           <button
             onClick={onCreate}
-            className="flex items-center gap-1.5 h-9 px-3 sm:px-4 rounded-lg bg-[#6C5CE7] hover:bg-[#5B4BD5] active:bg-[#4a3cc7] text-white text-sm font-bold transition-colors shadow-sm shadow-[#6C5CE7]/30"
+            className="flex items-center gap-1.5 h-9 px-3 sm:px-4 rounded-[15px] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-bold transition-colors shadow-sm shadow-[#6C5CE7]/30"
           >
             <Plus size={15} strokeWidth={2.5} />
             <span className="hidden sm:inline">{createLabel}</span>

@@ -92,7 +92,6 @@ function getOAuthUrl(provider: "google" | "github"): string {
   return `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent("read:user user:email")}`;
 }
 
-// ─── Inner component that uses useSearchParams ───────────────────────────────
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
