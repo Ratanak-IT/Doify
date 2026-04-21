@@ -95,7 +95,7 @@ export default function ContactPage() {
           We typically respond within 24 hours
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-slate-950 dark:text-white mb-3">
-          Get in <span className="text-blue-600 dark:text-gray-100">touch</span>{" "}
+          Get in <span className="text-blue-600">touch</span>{" "}
           with us
         </h1>
         <p className="text-xl sm:text-base text-slate-500 dark:text-slate-400 max-w-sm sm:max-w-md mx-auto leading-7">

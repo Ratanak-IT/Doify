@@ -168,7 +168,7 @@ export default function AboutPage() {
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-slate-950 dark:text-white mb-2">
           Built to keep your{" "}
-          <span className=" text-blue-600 dark:text-gray-100">
+          <span className=" text-blue-600">
             team on track
           </span>
         </h1>

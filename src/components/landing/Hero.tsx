@@ -15,12 +15,12 @@ export default function Hero() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-white dark:bg-[#111827] text-blue-600 dark:text-gray-200 text-xs font-bold px-3.5 py-1.5 rounded-full border border-purple-200 dark:border-blue-800 mb-5 sm:mb-7 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-green-400 animate-pulse" />
-          Now you can start manage your task now!
+          {t("landing.hero.badge")}
         </div>
 
         {/* Title */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-center text-slate-900 dark:text-white leading-tight mb-4 sm:mb-6 max-w-xs sm:max-w-2xl md:max-w-3xl lg:max-w-4xl">
-         <span className="text-blue-600 dark:text-gray-100">Doify</span> {t("landing.hero.title")}
+         <span className="text-blue-600">Doify</span> {t("landing.hero.title")}
         </h1>
 
         {/* Subtitle */}
@@ -41,7 +41,7 @@ export default function Hero() {
             href="/login"
             className="inline-flex items-center justify-center gap-1.5 bg-transparent hover:bg-slate-100 dark:hover:bg-[#111827] text-gray-800 dark:text-gray-200 border border-slate-300 dark:border-gray-600 font-semibold px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-sm sm:text-base"
           >
-            Sign in to Dashboard
+            {t("nav.signInToDashboard")}
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path
                 d="M3 7h8M8 4l3 3-3 3"
@@ -56,7 +56,7 @@ export default function Hero() {
 
         {/* Trust line */}
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center mb-8 sm:mb-12 px-4 sm:px-0">
-          Trusted by 50,000+ teams at startups, agencies, and Fortune 500s
+          {t("landing.hero.trust")}
         </p>
 
         {/* Kanban Demo */}
