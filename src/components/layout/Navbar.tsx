@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/lib/contexts/ThemeContext";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setLanguage } from "@/lib/features/i18n/i18nSlice";
 import { logout } from "@/lib/features/auth/authSlice";
-import { useGetUnreadCountQuery } from "@/lib/features/notifications/notificationsApi";
+import { useGetUnreadCountQuery, useGetNotificationsQuery, useMarkReadMutation, useMarkAllReadMutation } from "@/lib/features/notifications/notificationsApi";
+import type { Notification } from "@/lib/features/types/task-type";
 import {
   Sun,
   Moon,
@@ -19,6 +20,15 @@ import {
   Settings,
   Menu,
   X,
+  CheckCheck,
+  ChevronRight,
+  CheckSquare,
+  Calendar,
+  AlertCircle,
+  MessageSquare,
+  UserPlus,
+  Folder,
+  Users,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -37,7 +47,7 @@ export default function Navbar() {
   const user = useAppSelector((s) => s.auth.user);
   const { data: unread } = useGetUnreadCountQuery(undefined, {
     skip: !mounted || !user,
-    pollingInterval: 30000,
+    pollingInterval: 10000,
     refetchOnMountOrArgChange: true,
   });
   const unreadCount = mounted ? (unread?.count ?? 0) : 0;
