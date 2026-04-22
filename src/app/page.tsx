@@ -8,6 +8,7 @@ import Pricing from "@/components/landing/Pricing";
 import FinalCTA from "@/components/landing/FinalCTA";
 import NavBar from "@/components/NavBar";
 import { Metadata } from "next";
+import IntegrationSection from "@/components/landing/IntegrationSection";
 
 export const metadata: Metadata = {
   title: "Doify — Where teams move work forward",
@@ -24,6 +25,7 @@ export default function HomePage() {
   return (
     <div className="dark:bg-gray-900">
       <Hero />
+      <IntegrationSection/>
       <Logos />
       <Features />
       <HowItWorks />
