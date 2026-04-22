@@ -39,12 +39,21 @@ type Props = {
   initialOpenComments?: boolean;
 };
 
-export default function TeamDetailView({ team, idx, onBack, initialProjectId, initialTaskId, initialCommentId, initialOpenComments }: Props) {
+export default function TeamDetailView({
+  team,
+  idx,
+  onBack,
+  initialProjectId,
+  initialTaskId,
+  initialCommentId,
+  initialOpenComments,
+}: Props) {
   const [showInvite, setShowInvite] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projectSearch, setProjectSearch] = useState("");
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const gradientCls = TEAM_GRADIENTS[idx % TEAM_GRADIENTS.length];
@@ -52,14 +61,17 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
 
   const { data: projectsPage, isLoading: projectsLoading } =
     useGetProjectsByTeamQuery({ teamId: team.id });
-
   const projects = projectsPage?.content ?? [];
 
   const didAutoSelect = useRef(false);
   useEffect(() => {
-    if (didAutoSelect.current || !initialProjectId || projects.length === 0) return;
+    if (didAutoSelect.current || !initialProjectId || projects.length === 0)
+      return;
     const p = projects.find((proj) => proj.id === initialProjectId);
-    if (p) { didAutoSelect.current = true; setSelectedProject(p); }
+    if (p) {
+      didAutoSelect.current = true;
+      setSelectedProject(p);
+    }
   }, [initialProjectId, projects]);
 
   const filteredProjects = projects.filter((p) =>
@@ -71,8 +83,9 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
 
   return (
     <div className="flex flex-col h-full">
-      <div className={`bg-gradient-to-r ${gradientCls} px-3 sm:px-6 pt-3 sm:pt-5 pb-3 sm:pb-4`}>
-
+      <div
+        className={`bg-gradient-to-r ${gradientCls} px-3 sm:px-6 pt-3 sm:pt-5 pb-3 sm:pb-4 shrink-0`}
+      >
         <div className="flex items-start gap-2 sm:gap-4">
           <button
             onClick={onBack}
@@ -83,7 +96,9 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
 
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-medium mb-0.5">Team</p>
-            <h2 className="text-white text-lg sm:text-xl font-bold break-words">{team.name}</h2>
+            <h2 className="text-white text-lg sm:text-xl font-bold break-words">
+              {team.name}
+            </h2>
             {team.description && (
               <p className="text-white/80 text-xs sm:text-sm mt-0.5 sm:mt-1 break-words">
                 {team.description}
@@ -92,9 +107,8 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
           </div>
         </div>
 
-        {/* Row 2: stats + avatars + action buttons all on the left */}
+        {/* Stats + avatars + action buttons */}
         <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
-          {/* Stats */}
           <div className="flex items-center gap-1.5 text-white/90 text-xs sm:text-sm">
             <Users size={13} />
             <span className="font-semibold">{team.memberCount}</span>
@@ -142,10 +156,9 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
             )}
           </div>
 
-          {/* Divider */}
           <div className="w-px h-5 bg-white/30 hidden sm:block" />
 
-          {/* Action buttons — moved here from top-right */}
+          {/* Action buttons */}
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setShowInvite(true)}
@@ -177,35 +190,40 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
         </div>
       </div>
 
-      {/* ── Main Content ── */}
-      <div className="flex flex-1 overflow-hidden">
+ 
+      <div className="flex flex-1 min-h-0 overflow-hidden">
 
-        {/* Projects Sidebar — collapsible */}
-        <div
+        <aside
           className={[
-            "flex-col shrink-0 border-r border-slate-200 dark:border-slate-700",
-            "bg-[#F4F5F7] dark:bg-[#1a1c2e] overflow-auto transition-all duration-300",
+
+            "flex flex-col shrink-0 border-r border-slate-200 dark:border-slate-700",
+            "bg-[#F4F5F7] dark:bg-[#1a1c2e] overflow-y-auto transition-all duration-300",
+
+            selectedProject
+              ? "hidden"
+              : "flex w-full",
+
             sidebarOpen
-              ? selectedProject
-                ? "hidden md:flex md:w-56"
-                : "flex w-full md:w-56"
-              : "hidden",
+              ? "sm:flex sm:w-48 lg:w-56" 
+              : "sm:hidden",
+
           ].join(" ")}
         >
-          {/* Sidebar header + collapse button */}
+
           <div className="flex items-center justify-between px-4 pt-4 pb-2">
             <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Projects
             </p>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="w-6 h-6 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="w-6 h-6 hidden sm:flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               title="Collapse sidebar"
             >
               <PanelLeftClose size={14} />
             </button>
           </div>
 
+          {/* Search */}
           <div className="px-3 mb-3">
             <div className="relative">
               <Search
@@ -221,6 +239,7 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
             </div>
           </div>
 
+          {/* Project list */}
           {projectsLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
               <div
@@ -266,20 +285,24 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
               </button>
             ))
           )}
-        </div>
+        </aside>
 
-        {/* Project Tasks Area */}
+        {/* ── Project Tasks Area ── */}
+        {/*
+          Always visible on sm+ (flex-1 fills remaining width).
+          On mobile: visible only when a project is selected OR sidebar is closed.
+        */}
         <div
           className={[
-            "overflow-hidden bg-white dark:bg-[#1E1B2E]",
-            selectedProject || !sidebarOpen
-              ? "flex flex-col flex-1"
-              : "hidden md:flex md:flex-col md:flex-1",
+            "flex flex-col flex-1 min-w-0 overflow-hidden",
+            "bg-white dark:bg-[#1E1B2E]",
+            // Mobile: hide when sidebar is showing (no project selected)
+            !selectedProject ? "hidden sm:flex" : "flex",
           ].join(" ")}
         >
-          {/* Show-sidebar button — visible only when sidebar is collapsed */}
+          {/* Expand-sidebar button — shown on sm+ when sidebar is collapsed */}
           {!sidebarOpen && (
-            <div className="flex items-center gap-2 px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a1c2e] shrink-0">
+            <div className="hidden sm:flex items-center gap-2 px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a1c2e] shrink-0">
               <button
                 onClick={() => setSidebarOpen(true)}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors"
@@ -294,6 +317,7 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
           {selectedProject ? (
             <ProjectTasksPanel
               project={selectedProject}
+              // On mobile the back arrow in the panel should deselect the project
               onBack={() => setSelectedProject(null)}
               initialTaskId={initialTaskId}
               initialCommentId={initialCommentId}
@@ -301,7 +325,9 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center p-8">
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${iconBgCls}`}>
+              <div
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center ${iconBgCls}`}
+              >
                 <FolderKanban size={22} />
               </div>
               <p className="text-base font-semibold text-slate-700 dark:text-slate-200">
@@ -315,7 +341,7 @@ export default function TeamDetailView({ team, idx, onBack, initialProjectId, in
         </div>
       </div>
 
-      {/* Modals */}
+      {/* ── Modals ── */}
       {showInvite && (
         <InviteModal teamId={team.id} onClose={() => setShowInvite(false)} />
       )}

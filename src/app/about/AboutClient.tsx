@@ -177,8 +177,7 @@ export default function AboutPage() {
         </p>
         <p className="text-xl sm:text-base text-slate-500 dark:text-gray-200 max-w-md sm:max-w-lg mx-auto mb-7 leading-7">
           Doify is a modern task management platform designed to help teams plan smarter,
-          collaborate in real time, and ship work without the chaos. From daily to-dos to
-          full project pipelines — we&apos;ve got it covered.
+          collaborate in real time, and ship work without the chaos.
         </p>
 
         <div className="mt-8 sm:mt-12 mx-auto max-w-3xl rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">

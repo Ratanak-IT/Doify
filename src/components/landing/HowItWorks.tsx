@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 const step = [
   {
     num: "01",
@@ -38,26 +42,19 @@ export default function HowItWorks() {
   return (
     <section
       id="templates"
-      className="
-        lp-section lp-section--gray
-        bg-gray-50 text-gray-900
-        dark:bg-[#0B1120] dark:text-white
-        transition-colors duration-300
-      "
+      className="lp-section lp-section--gray bg-gray-50 text-gray-900 dark:bg-[#0B1120] dark:text-white transition-colors duration-300"
     >
       <div className="lp-container px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="lp-hiw-content">
             <span
-              className="lp-eyebrow 
-              text-blue-600 dark:text-gray-200"
+              className="lp-eyebrow text-blue-600 dark:text-gray-200"
             >
               How it works
             </span>
 
             <h2
-              className="lp-section-title
-              text-gray-900 dark:text-white"
+              className="lp-section-title text-gray-900 dark:text-white"
             >
               From backlog to shipped
               <br />
@@ -65,49 +62,59 @@ export default function HowItWorks() {
             </h2>
 
             <div className="lp-steps">
-              {step.map((s) => (
-                <div key={s.num} className="lp-step">
+              {step.map((s, index) => (
+                <motion.div
+                  key={s.num}
+                  className="lp-step"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
                   <div
-                    className="lp-step-num
-                    bg-gray-200 text-gray-800
-                    dark:bg-gray-700 dark:text-gray-200"
+                    className="lp-step-num bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                   >
                     {s.num}
                   </div>
 
                   <div>
                     <h3
-                      className="lp-step-title
-                      text-gray-900 dark:text-white"
+                      className="lp-step-title text-gray-900 dark:text-white"
                     >
                       {s.title}
                     </h3>
 
                     <p
-                      className="lp-step-desc
-                      text-gray-600 dark:text-gray-300"
+                      className="lp-step-desc text-gray-600 dark:text-gray-300"
                     >
                       {s.desc}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            <a
+            <motion.a
               href="/register"
               className="bg-blue-600 text-white font-bold rounded-md lp-btn-md"
               style={{ marginTop: 28, display: "inline-block" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Try it now →
-            </a>
+            </motion.a>
           </div>
 
-          <div
-            className="lp-hiw-preview
-            bg-white dark:bg-[#111827]
-            border border-gray-200 dark:border-gray-700
-            rounded-xl"
+          <motion.div
+            className="lp-hiw-preview bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="lp-preview-header">
               <div className="lp-preview-dots">
@@ -116,8 +123,7 @@ export default function HowItWorks() {
                 <span />
               </div>
               <span
-                className="lp-preview-title
-                text-gray-700 dark:text-gray-300"
+                className="lp-preview-title text-gray-700 dark:text-gray-300"
               >
                 Sprint 12
               </span>
@@ -125,40 +131,47 @@ export default function HowItWorks() {
 
             <div className="lp-preview-board dark:bg-gray-400">
               {status.map((col, ci) => (
-                <div key={ci} className="lp-preview-col dark:bg-gray-300">
+                <motion.div
+                  key={ci}
+                  className="lp-preview-col dark:bg-gray-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.4 + ci * 0.1 }}
+                >
                   <div className="lp-preview-col-head">
                     <span
                       className="lp-preview-dot"
                       style={{ background: col.color }}
                     />
                     <span
-                      className="lp-preview-col-label
-                      text-gray-800 dark:text-gray-500 "
+                      className="lp-preview-col-label text-gray-800 dark:text-gray-500"
                     >
                       {col.label}
                     </span>
                     <span
-                      className="lp-preview-col-count
-                      text-gray-500 dark:text-gray-400"
+                      className="lp-preview-col-count text-gray-500 dark:text-gray-400"
                     >
                       {col.items.length}
                     </span>
                   </div>
 
                   {col.items.map((item, ii) => (
-                    <div
+                    <motion.div
                       key={ii}
-                      className="lp-preview-card
-                        bg-gray-100 text-gray-800
-                        dark:bg-gray-500 dark:text-gray-200 text-[15px]"
+                      className="lp-preview-card bg-gray-100 text-gray-800 dark:bg-gray-500 dark:text-gray-200 text-[15px]"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: 0.6 + ci * 0.1 + ii * 0.05 }}
                     >
                       {item}
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
