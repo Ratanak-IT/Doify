@@ -37,6 +37,9 @@ export default function Navbar() {
   const user = useAppSelector((s) => s.auth.user);
   const { data: unread } = useGetUnreadCountQuery(undefined, {
     skip: !mounted || !user,
+    pollingInterval: 30000,
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
   });
   const unreadCount = mounted ? (unread?.count ?? 0) : 0;
 
@@ -61,14 +64,14 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     if (isLoggingOut) return; // Prevent multiple logout attempts
-    
+
     setIsLoggingOut(true);
     setProfileOpen(false);
     setMobileMenuOpen(false);
-    
+
     // Clear state and redirect
     dispatch(logout());
-    
+
     // Use replace to prevent going back to dashboard
     router.replace("/login");
   };
@@ -251,7 +254,8 @@ export default function Navbar() {
                           disabled={isLoggingOut}
                           className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <LogOut size={14} /> {isLoggingOut ? "Signing out..." : "Sign out"}
+                          <LogOut size={14} />{" "}
+                          {isLoggingOut ? "Signing out..." : "Sign out"}
                         </button>
                       </div>
                     </>
@@ -441,7 +445,8 @@ export default function Navbar() {
               disabled={isLoggingOut}
               className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <LogOut size={15} /> {isLoggingOut ? "Signing out..." : "Sign out"}
+              <LogOut size={15} />{" "}
+              {isLoggingOut ? "Signing out..." : "Sign out"}
             </button>
           </div>
         )}
