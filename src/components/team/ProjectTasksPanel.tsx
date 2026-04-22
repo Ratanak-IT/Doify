@@ -987,7 +987,20 @@ export default function ProjectTasksPanel({
         >
           <div className="flex gap-4 min-w-max h-full">
             {COLUMNS.map((col) => {
-              const colTasks = filteredTasks.filter((t) => t.status === col.id);
+              const PRIORITY_ORDER: Record<string, number> = {
+                URGENT: 0,
+                HIGH: 1,
+                MEDIUM: 2,
+                LOW: 3,
+              };
+              const colTasks = filteredTasks
+                .filter((t) => t.status === col.id)
+                .slice()
+                .sort(
+                  (a, b) =>
+                    (PRIORITY_ORDER[a.priority] ?? 99) -
+                    (PRIORITY_ORDER[b.priority] ?? 99),
+                );
               const isDropTarget = dropColId === col.id;
               return (
                 <div
@@ -1021,8 +1034,6 @@ export default function ProjectTasksPanel({
                     </button>
                   </div>
 
-                  {/* ── FIX: Column body — removed inline style backgroundColor; use Tailwind bgClass/darkBgClass
-                              so dark mode actually applies. Drop-active state appended conditionally. ── */}
                   <div
                     className={[
                       "flex-1 rounded-xl p-2 flex flex-col gap-2 transition-all duration-150",

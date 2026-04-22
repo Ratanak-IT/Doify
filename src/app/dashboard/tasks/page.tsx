@@ -766,7 +766,20 @@ function TasksBoard() {
       >
         <div className="flex gap-3 sm:gap-4 min-w-max h-full">
           {COLUMNS.map((col) => {
-            const colTasks = tasks.filter((t) => t.status === col.id);
+            const PRIORITY_ORDER: Record<string, number> = {
+              URGENT: 0,
+              HIGH: 1,
+              MEDIUM: 2,
+              LOW: 3,
+            };
+            const colTasks = tasks
+              .filter((t) => t.status === col.id)
+              .slice()
+              .sort(
+                (a, b) =>
+                  (PRIORITY_ORDER[a.priority] ?? 99) -
+                  (PRIORITY_ORDER[b.priority] ?? 99),
+              );
             const isOver = dragOverCol === col.id;
             const colBg = isOver
               ? `${col.accent}22`
