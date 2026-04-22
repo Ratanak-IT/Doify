@@ -9,6 +9,7 @@ import StoreProvider from "./StoreProvider";
 import { poppins, sovaphum } from "./fonts";
 import { Toaster } from "sonner";
 import { NotificationStreamProvider } from "@/components/NotificationStreamProvider";
+import { AuthRehydrator } from "@/components/AuthRehydrator";
 
 export default function RootProviders({
   children,
@@ -38,6 +39,7 @@ export default function RootProviders({
     >
       <ThemeProvider>
         <StoreProvider>
+           <AuthRehydrator />     
            <NotificationStreamProvider /> 
           {showNavbar && <NavbarWrapper />}
           {children}
