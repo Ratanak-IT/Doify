@@ -117,6 +117,8 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3036875836512220"
+     crossorigin="anonymous"></script>
       </head>
       <body suppressHydrationWarning>
         <RootProviders>{children}</RootProviders>
